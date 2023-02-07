@@ -47,6 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="130dp"
         android:text="@string/location_submit_button"
+        android:onClick="submitUserInput"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
