@@ -2,17 +2,13 @@ package com.example.compassproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+public class PromptUserForLocation extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Intent intent = new Intent(this, PromptUserForLocation.class);
-        startActivity(intent);
+        setContentView(R.layout.activity_prompt_user_for_location);
     }
 }
