@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">CompassProject</string>
+    <string name="add_location">Add Location</string>
+    <string name="n">N</string>
+    <string name="e">E</string>
+    <string name="w">W</string>
+    <string name="s">S</string>
 </resources>
