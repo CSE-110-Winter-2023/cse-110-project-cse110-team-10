@@ -44,6 +44,7 @@
         tools:layout_editor_absoluteX="246dp"
         tools:layout_editor_absoluteY="81dp" />
 
+
     <TextView
         android:id="@+id/compass_E"
         android:layout_width="32sp"
@@ -103,4 +104,5 @@
         app:srcCompat="@drawable/compass_face" />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
