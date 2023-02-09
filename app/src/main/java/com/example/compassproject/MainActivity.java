@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onNewLocationClick(View view) {
-        Intent intent = new Intent(this, CompassActivity.class);
+        Intent intent = new Intent(this, NewLocationActivity.class);
         startActivity(intent);
     }
 }
