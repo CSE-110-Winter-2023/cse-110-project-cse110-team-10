@@ -2,6 +2,7 @@ package com.example.compassproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 
 import android.content.Intent;
@@ -27,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, 200);
         }
 
-        locationService = LocationService.singleton(this);
+        storeUserLoc();
+      /*  locationService = LocationService.singleton(this);
         LiveData<Pair<Double,Double>> loc = locationService.getLocation();
 
         //storing location on shared preferences
@@ -38,22 +40,17 @@ public class MainActivity extends AppCompatActivity {
 
         loc.observe(this, location-> {
 
-            editor.putFloat("Latitude", Double.valueOf(location.first).floatValue());
-            editor.putFloat("Longitude", Double.valueOf(location.second).floatValue());
+            editor.putFloat("User Latitude", Double.valueOf(location.first).floatValue());
+            editor.putFloat("User Longitude", Double.valueOf(location.second).floatValue());
             editor.apply();
-            //check if location is correct
-            //System.out.println(location.first);
-            //System.out.println(location.second);
-
-            //check if stored location is correct
-            SharedPreferences pref = getPreferences(MODE_PRIVATE);
-            System.out.println("Latitude: " + pref.getFloat("Latitude", 100));
-            System.out.println("Longitude: " + pref.getFloat("Longitude", 100));
 
         });
+*/
 
-
-
+    }
+    private void storeUserLoc()
+    {
+        SavedUserLocation.saveUserLoc(this, LocationService.singleton(this), getPreferences(MODE_PRIVATE));
     }
 
     public void onOpenCompassClick(View view) {
