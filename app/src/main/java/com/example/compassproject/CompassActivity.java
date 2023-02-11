@@ -59,4 +59,8 @@ public class CompassActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NewLocationActivity.class);
         startActivity(intent);
     }
+
+    private void displaySingleLocation(double degrees) {
+
+    }
 }
