@@ -10,10 +10,9 @@
       android:id="@+id/add_location_btn"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginTop="16dp"
-      android:layout_marginBottom="16dp"
+      android:layout_marginBottom="128dp"
+      android:text="Add Location"
       android:onClick="onAddLocationClicked"
-      android:text="@string/add_location"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintHorizontal_bias="0.497"
@@ -104,5 +103,4 @@
         app:srcCompat="@drawable/compass_face" />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
