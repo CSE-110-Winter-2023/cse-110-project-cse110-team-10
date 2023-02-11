@@ -8,6 +8,10 @@ import android.view.View;
 
 public class CompassActivity extends AppCompatActivity {
 
+
+    /*
+     * TODO: Update locations and angles for compass_N, compass_E, compass_S, compass_W
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
