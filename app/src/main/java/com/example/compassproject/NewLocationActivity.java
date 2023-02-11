@@ -18,7 +18,6 @@ public class NewLocationActivity extends AppCompatActivity {
     }
 
     public void onSubmitLocationClicked(View view) {
-
         if(isInputValid()){
             /*
             Save info
@@ -26,34 +25,32 @@ public class NewLocationActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
+        else{
+            showPopup(this, "Error", getErrorMessage());
+        }
     }
 
-    public boolean isInputValid(){
-        TextView coordsInput = findViewById(R.id.coordinateInput);
-        String coords = coordsInput.getText().toString();
-
-        TextView labelInput = findViewById(R.id.labelInput);
-        String label = labelInput.getText().toString();
-
-        return isInputValid(coords, label);
+    private boolean isInputValid(){
+        return InputHandling.isInputValid(getCoordinates(), getLabel());
     }
 
-    // Checks if all inputted data is valid
-    public boolean isInputValid(String coords, String label){
+    private String getErrorMessage(){
+        return InputHandling.getErrorMessage(getInputError());
+    }
 
-        if(InputHandling.isCoordinatesEmpty(coords)){
-            showPopup(this, "Error", "Please make sure the coordinates are not empty.");
-            return false;
-        }
-        else if(!InputHandling.isCoordinatesValid(coords)){
-            showPopup(this, "Error", "Please make sure the coordinates are valid.");
-            return false;
-        }
-        else if(InputHandling.isLabelEmpty(label)){
-            showPopup(this,"Error", "Please make sure the label is not empty.");
-            return false;
-        }
+    private int getInputError() {
+        return InputHandling.getInputError(getCoordinates(), getLabel());
+    }
 
-        return true;
+    private String getCoordinates(){
+        TextView coords_input = findViewById(R.id.coordinateInput);
+        String coords = coords_input.getText().toString();
+        return coords;
+    }
+
+    private String getLabel(){
+        TextView label_input = findViewById(R.id.labelInput);
+        String label = label_input.getText().toString();
+        return label;
     }
 }
