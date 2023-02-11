@@ -11,8 +11,6 @@ public class SavedUserLocation
 {
     public static void saveUserLoc(LifecycleOwner owner, LocationService locationService, SharedPreferences preferences)
     {
-
-
         SharedPreferences.Editor editor = preferences.edit();
         LiveData<Pair<Double,Double>> loc = locationService.getLocation();
 
@@ -25,5 +23,15 @@ public class SavedUserLocation
             System.out.println(preferences.getFloat("User Latitude", 100));
             System.out.println(preferences.getFloat("User Longitude", 100));
         });
+    }
+
+    public static float getUserLatitude(SharedPreferences preferences)
+    {
+        return preferences.getFloat("User Latitude", 100);
+    }
+
+    public static float getUserLongitude(SharedPreferences preferences)
+    {
+        return preferences.getFloat("User Longitude", 100);
     }
 }
