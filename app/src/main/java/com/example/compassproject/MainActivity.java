@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.LiveData;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -29,10 +30,28 @@ public class MainActivity extends AppCompatActivity {
         locationService = LocationService.singleton(this);
         LiveData<Pair<Double,Double>> loc = locationService.getLocation();
 
+        //storing location on shared preferences
+
+
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
         loc.observe(this, location-> {
-            System.out.println(location.first);
-            System.out.println(location.second);
+
+            editor.putFloat("Latitude", Double.valueOf(location.first).floatValue());
+            editor.putFloat("Longitude", Double.valueOf(location.second).floatValue());
+            editor.apply();
+            //check if location is correct
+            //System.out.println(location.first);
+            //System.out.println(location.second);
+
+            //check if stored location is correct
+            SharedPreferences pref = getPreferences(MODE_PRIVATE);
+            System.out.println("Latitude: " + pref.getFloat("Latitude", 100));
+            System.out.println("Longitude: " + pref.getFloat("Longitude", 100));
+
         });
+
 
 
     }
