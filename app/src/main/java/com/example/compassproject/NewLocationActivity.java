@@ -2,12 +2,12 @@ package com.example.compassproject;
 
 import static com.example.compassproject.Utilities.showPopup;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class NewLocationActivity extends AppCompatActivity {
 
@@ -19,15 +19,19 @@ public class NewLocationActivity extends AppCompatActivity {
 
     public void onSubmitLocationClicked(View view) {
         if(isInputValid()){
-            /*
-            Save info
-            */
+            saveLocation();
+
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
         else{
             showPopup(this, "Error", getErrorMessage());
         }
+    }
+
+    private void saveLocation(){
+        SavedLocations sl = new SavedLocations(getSharedPreferences(getString(R.string.saveLocation), MODE_PRIVATE));
+        sl.saveLocation(getCoordinates(), getLabel());
     }
 
     private boolean isInputValid(){

@@ -20,6 +20,7 @@ public class CompassActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compass);
+        storeUserLoc();
 
         final ImageView compass = (ImageView) findViewById(R.id.compass_face);
         ViewTreeObserver observer = compass.getViewTreeObserver();
@@ -61,6 +62,12 @@ public class CompassActivity extends AppCompatActivity {
             }
         });
 
+        storeUserLoc();
+    }
+
+    private void storeUserLoc()
+    {
+        SavedUserLocation.saveUserLoc(this, LocationService.singleton(this), getPreferences(MODE_PRIVATE));
     }
 
     public void onAddLocationClicked(View view) {
