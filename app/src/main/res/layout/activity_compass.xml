@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/compass_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CompassActivity">
@@ -11,17 +12,17 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginBottom="128dp"
-      android:text="Add Location"
       android:onClick="onAddLocationClicked"
+      android:text="Add Location"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintHorizontal_bias="0.497"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+      app:layout_constraintTop_toBottomOf="@+id/compass_cl"
       app:layout_constraintVertical_bias="0.0" />
 
   <androidx.constraintlayout.widget.ConstraintLayout
-      android:id="@+id/constraintLayout"
+      android:id="@+id/compass_cl"
       android:layout_width="0dp"
       android:layout_height="411dp"
       android:layout_marginTop="16dp"
@@ -39,6 +40,7 @@
         app:layout_constraintCircle="@+id/compass_face"
         app:layout_constraintCircleAngle="0"
         app:layout_constraintCircleRadius="100dp"
+        tools:ignore="MissingConstraints"
         tools:layout_constraintCircleAngle="90"
         tools:layout_editor_absoluteX="246dp"
         tools:layout_editor_absoluteY="81dp" />
@@ -54,6 +56,7 @@
         app:layout_constraintCircle="@+id/compass_face"
         app:layout_constraintCircleAngle="90"
         app:layout_constraintCircleRadius="100dp"
+        tools:ignore="MissingConstraints"
         tools:layout_constraintCircleAngle="90"
         tools:layout_editor_absoluteX="246dp"
         tools:layout_editor_absoluteY="81dp" />
@@ -68,6 +71,7 @@
         app:layout_constraintCircle="@+id/compass_face"
         app:layout_constraintCircleAngle="270"
         app:layout_constraintCircleRadius="100dp"
+        tools:ignore="MissingConstraints"
         tools:layout_constraintCircleAngle="90"
         tools:layout_editor_absoluteX="246dp"
         tools:layout_editor_absoluteY="81dp" />
@@ -82,6 +86,7 @@
         app:layout_constraintCircle="@+id/compass_face"
         app:layout_constraintCircleAngle="180"
         app:layout_constraintCircleRadius="100dp"
+        tools:ignore="MissingConstraints"
         tools:layout_constraintCircleAngle="90"
         tools:layout_editor_absoluteX="246dp"
         tools:layout_editor_absoluteY="81dp" />
