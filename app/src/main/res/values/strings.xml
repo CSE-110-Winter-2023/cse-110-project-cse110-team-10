@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">CompassProject</string>
+    <string name="add_location">Add Location</string>
+    <string name="n">N</string>
+    <string name="e">E</string>
+    <string name="w">W</string>
+    <string name="s">S</string>
+    <string name="new_location_label">New Location</string>
+    <string name="coordinates_input_hint">Coordinates</string>
+    <string name="label_input_hint">Label</string>
+    <string name="location_submit_button">Submit</string>
+    <string name="saveLocation">LocationData</string>
 </resources>
