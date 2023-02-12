@@ -15,42 +15,19 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
-    private LocationService locationService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //request permission from user at runtime to use location
+       //request permission from user at runtime to use location
         if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, 200);
         }
 
-        storeUserLoc();
-      /*  locationService = LocationService.singleton(this);
-        LiveData<Pair<Double,Double>> loc = locationService.getLocation();
-
-        //storing location on shared preferences
-
-
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-
-        loc.observe(this, location-> {
-
-            editor.putFloat("User Latitude", Double.valueOf(location.first).floatValue());
-            editor.putFloat("User Longitude", Double.valueOf(location.second).floatValue());
-            editor.apply();
-
-        });
-*/
-
-    }
-    private void storeUserLoc()
-    {
-        SavedUserLocation.saveUserLoc(this, LocationService.singleton(this), getPreferences(MODE_PRIVATE));
     }
 
     public void onOpenCompassClick(View view) {

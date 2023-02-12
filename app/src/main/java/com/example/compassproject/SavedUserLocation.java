@@ -2,6 +2,7 @@ package com.example.compassproject;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.location.LocationListener;
 import android.util.Pair;
 
 import androidx.lifecycle.LifecycleOwner;
@@ -20,8 +21,6 @@ public class SavedUserLocation
             editor.putFloat("User Longitude", Double.valueOf(location.second).floatValue());
             editor.apply();
 
-            System.out.println(preferences.getFloat("User Latitude", 100));
-            System.out.println(preferences.getFloat("User Longitude", 100));
         });
     }
 
