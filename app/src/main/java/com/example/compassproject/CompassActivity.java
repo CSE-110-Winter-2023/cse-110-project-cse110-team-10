@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 public class CompassActivity extends AppCompatActivity {
     static int radius;
+    SavedLocations savedLocations;
 
     /*
      * TODO: Update locations and angles for compass_N, compass_E, compass_S, compass_W
@@ -21,6 +22,7 @@ public class CompassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compass);
         storeUserLoc();
+        savedLocations = new SavedLocations(getPreferences(MODE_PRIVATE));
 
         final ImageView compass = (ImageView) findViewById(R.id.compass_face);
         ViewTreeObserver observer = compass.getViewTreeObserver();
@@ -54,10 +56,18 @@ public class CompassActivity extends AppCompatActivity {
                 //TODO: loop through all locations w correct degrees
                 /* degrees ==> SavedLocation.getDegrees(loc_id)
                  */;
-                DisplayHelper.displaySingleLocation(CompassActivity.this, 0, rad-64, 45);
-                DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, 200);
-                DisplayHelper.displaySingleLocation(CompassActivity.this, 2, rad-64, 400);
 
+                 float userLat = getUserLatitude();
+                float userLong = getUserLongitude();
+                int numLocations = savedLocations.getNumLocations();
+                System.out.println(numLocations);
+
+                for(int i = 0; i <= 1; i++){
+                    float locLat = (float) 90.3;
+                    float locLong = (float) 90.3;
+                    float degree = DegreeCalculator.degreeBetweenCoordinates(userLat, userLong, locLat, locLong);
+                    DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, degree);
+                }
                 compass.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
@@ -65,9 +75,16 @@ public class CompassActivity extends AppCompatActivity {
         storeUserLoc();
     }
 
-    private void storeUserLoc()
-    {
+    private void storeUserLoc() {
         SavedUserLocation.saveUserLoc(this, LocationService.singleton(this), getPreferences(MODE_PRIVATE));
+    }
+
+    private float getUserLatitude() {
+        return SavedUserLocation.getUserLatitude(getPreferences(MODE_PRIVATE));
+    }
+
+    private float getUserLongitude() {
+        return SavedUserLocation.getUserLongitude(getPreferences(MODE_PRIVATE));
     }
 
     public void onAddLocationClicked(View view) {

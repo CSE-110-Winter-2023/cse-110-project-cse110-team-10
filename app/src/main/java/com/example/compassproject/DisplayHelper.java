@@ -12,18 +12,12 @@ public class DisplayHelper {
 
     public static void displaySingleLocation(CompassActivity activity, int loc_id, int radius, float degrees) {
 
-        //TODO: figure out how to correctly set view id
         int loc_view_id = LOCATION_VIEW_BASE_ID + loc_id;
 
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
 
-        //TODO: Need to switch to CircleView
-        TextView loc_view = new TextView(activity);
-        loc_view.setText("test");
-        //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-        // note, the numbering for the loc_view_id start at 1 not 0 so try and save locations starting with location 1
+        CircleView loc_view = new CircleView(activity);
         cl.addView(loc_view, loc_id);
         loc_view.setId(View.generateViewId());
 
