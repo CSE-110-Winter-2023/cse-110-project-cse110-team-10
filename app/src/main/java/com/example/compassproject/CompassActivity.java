@@ -56,8 +56,7 @@ public class CompassActivity extends AppCompatActivity {
                 //TODO: loop through all locations w correct degrees
                 /* degrees ==> SavedLocation.getDegrees(loc_id)
                  */;
-
-                 float userLat = getUserLatitude();
+                float userLat = getUserLatitude();
                 float userLong = getUserLongitude();
                 int numLocations = savedLocations.getNumLocations();
                 System.out.println(numLocations);
