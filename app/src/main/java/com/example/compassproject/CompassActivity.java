@@ -2,11 +2,9 @@ package com.example.compassproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -52,7 +50,12 @@ public class CompassActivity extends AppCompatActivity {
                 west_lp.circleRadius = rad;
                 west.setLayoutParams(west_lp);
 
-                displaySingleLocation(0, rad-64);
+                //TODO: loop through all locations w correct degrees
+                /* degrees ==> SavedLocation.getDegrees(loc_id)
+                 */;
+                DisplayHelper.displaySingleLocation(CompassActivity.this, 0, rad-64, 45);
+                DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, 200);
+                DisplayHelper.displaySingleLocation(CompassActivity.this, 2, rad-64, 400);
 
                 compass.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
@@ -65,26 +68,4 @@ public class CompassActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void displaySingleLocation(int loc_id, int rad) {
-        float deg = 100 /* SavedLocation.getDegrees(loc_id)*/;
-
-        //create view
-        ConstraintLayout cl = (ConstraintLayout) findViewById(R.id.compass_cl);
-        ConstraintSet cs = new ConstraintSet();
-
-
-        //TODO: Need to switch to CircleView
-        TextView loc_view = new TextView(this);
-        loc_view.setText("test");
-        //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-        cl.addView(loc_view, loc_id);
-        loc_view.setId(View.generateViewId());
-
-        cs.clone(cl);
-
-        cs.constrainCircle(loc_view.getId(), R.id.compass_face, rad, deg);
-
-        cs.applyTo(cl);
-    }
 }
