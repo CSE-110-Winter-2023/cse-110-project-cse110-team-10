@@ -9,4 +9,5 @@
     <string name="coordinates_input_hint">Coordinates</string>
     <string name="label_input_hint">Label</string>
     <string name="location_submit_button">Submit</string>
+    <string name="saveLocation">LocationData</string>
 </resources>
