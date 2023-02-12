@@ -26,4 +26,16 @@ public class DegreeCalculatorTester
     {
         assertEquals(0.0, DegreeCalculator.degreeBetweenCoordinates(34.863415248531176,-119.25342687499997, 47.68386951916552, -119.25342687499997 ), 0);
     }
+
+    @Test
+    public void fixNegativeDegree()
+    {
+        assertEquals(345, DegreeCalculator.fixNegative(-15), 0);
+    }
+
+    @Test
+    public void ignorePositiveDegree()
+    {
+        assertEquals(45, DegreeCalculator.fixNegative(45), 0);
+    }
 }

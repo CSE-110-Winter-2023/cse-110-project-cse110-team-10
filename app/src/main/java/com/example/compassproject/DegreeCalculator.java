@@ -24,7 +24,7 @@ public class DegreeCalculator {
     }
 
 
-    private static float fixNegative(float degree)
+    public static float fixNegative(float degree)
     {
         if(degree < 0)
         {

@@ -62,6 +62,38 @@ import org.robolectric.shadows.ShadowApplication;
             });
         }
 
+        @Test
+        public void testUpdatedUserLocationCorrectly()
+        {
+            ActivityScenario<NewLocationActivity> scenario = ActivityScenario.launch(NewLocationActivity.class);
+            scenario.moveToState(Lifecycle.State.CREATED);
+            scenario.moveToState(Lifecycle.State.STARTED);
+            scenario.onActivity(activity -> {
+
+                SharedPreferences preferences = activity.getSharedPreferences("Location", Context.MODE_PRIVATE);
+                MockLocationService m1 = new MockLocationService(activity);
+                MutableLiveData<Pair<Double,Double>> coord = new MutableLiveData<>();
+                coord.setValue(new Pair(33.344281538848165, -97.58838781250005));
+
+                m1.setLocation(coord);
+
+                SavedUserLocation.saveUserLoc(activity, m1, preferences);
+
+                assertEquals(33.344281538848165, preferences.getFloat("User Latitude", 100), 0.001);
+                assertEquals(-97.58838781250005, preferences.getFloat("User Longitude", 100), 0.001);
+
+                MutableLiveData<Pair<Double,Double>> coord2 = new MutableLiveData<>();
+                coord2.setValue(new Pair(53.340702936615486, -87.06348546874996));
+
+                m1.setLocation(coord2);
+
+                SavedUserLocation.saveUserLoc(activity, m1, preferences);
+
+                assertEquals(53.340702936615486, preferences.getFloat("User Latitude", 100), 0.001);
+                assertEquals(-87.06348546874996, preferences.getFloat("User Longitude", 100), 0.001);
+
+            });
+        }
 
     }
 
