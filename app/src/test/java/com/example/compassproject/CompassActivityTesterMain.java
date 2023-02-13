@@ -43,4 +43,20 @@ public class CompassActivityTesterMain {
             assertEquals(0, loc_lp.circleAngle, 0);
         });
     }
+
+    @Test
+    public void testDisplaySingleLocationNonZero() {
+        ActivityScenario<CompassActivity> scenario = ActivityScenario.launch(CompassActivity.class);
+        scenario.moveToState(Lifecycle.State.CREATED);
+        scenario.moveToState(Lifecycle.State.STARTED);
+        scenario.onActivity(activity -> {
+            DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, 100,0);
+            View loc = activity.findViewById(2);
+            ConstraintLayout.LayoutParams loc_lp = (ConstraintLayout.LayoutParams) loc.getLayoutParams();
+            //check if radius is correct
+            assertEquals(100, loc_lp.circleRadius);
+            //check if angle is correct
+            assertEquals(0, loc_lp.circleAngle, 0);
+        });
+    }
 }
