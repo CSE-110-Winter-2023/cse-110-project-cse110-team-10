@@ -3,7 +3,9 @@ package com.example.compassproject;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -23,6 +25,7 @@ public class CompassActivity extends AppCompatActivity {
         setContentView(R.layout.activity_compass);
         storeUserLoc();
         savedLocations = new SavedLocations(getSharedPreferences("LocationData", MODE_PRIVATE));
+        SharedPreferences preferences = getSharedPreferences("Location", Context.MODE_PRIVATE);
 
         final ImageView compass = (ImageView) findViewById(R.id.compass_face);
         ViewTreeObserver observer = compass.getViewTreeObserver();
@@ -56,10 +59,9 @@ public class CompassActivity extends AppCompatActivity {
                 //TODO: loop through all locations w correct degrees
                 /* degrees ==> SavedLocation.getDegrees(loc_id)
                  */;
-                float userLat = getUserLatitude();
-                float userLong = getUserLongitude();
+                float userLat = SavedUserLocation.getUserLatitude(preferences);
+                float userLong = SavedUserLocation.getUserLongitude(preferences);
                 int numLocations = savedLocations.getNumLocations();
-                System.out.println(numLocations);
 
                 for(int i = 0; i <= numLocations; i++){
                     float locLat = savedLocations.getLatitude(i);
@@ -76,14 +78,6 @@ public class CompassActivity extends AppCompatActivity {
 
     private void storeUserLoc() {
         SavedUserLocation.saveUserLoc(this, LocationService.singleton(this), getPreferences(MODE_PRIVATE));
-    }
-
-    private float getUserLatitude() {
-        return SavedUserLocation.getUserLatitude(getPreferences(MODE_PRIVATE));
-    }
-
-    private float getUserLongitude() {
-        return SavedUserLocation.getUserLongitude(getPreferences(MODE_PRIVATE));
     }
 
     public void onAddLocationClicked(View view) {
