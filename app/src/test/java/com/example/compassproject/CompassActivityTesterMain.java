@@ -36,7 +36,7 @@ public class CompassActivityTesterMain {
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.onActivity(activity -> {
             DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, 150,90);
-            View loc = activity.findViewById(2);
+            View loc = activity.findViewById(1);
             ConstraintLayout.LayoutParams loc_lp = (ConstraintLayout.LayoutParams) loc.getLayoutParams();
             //check if radius is correct
             assertEquals(150, loc_lp.circleRadius);
