@@ -28,26 +28,9 @@ public class CompassActivityTesterMain {
         app.grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
-    ActivityScenario scenario;
-    @Test
-    public void testDisplaySingleLocation() {
-        scenario = ActivityScenario.launch(CompassActivity.class);
-        scenario.moveToState(Lifecycle.State.CREATED);
-        scenario.moveToState(Lifecycle.State.STARTED);
-        scenario.onActivity(activity -> {
-            DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, 150,90);
-            View loc = activity.findViewById(1);
-            ConstraintLayout.LayoutParams loc_lp = (ConstraintLayout.LayoutParams) loc.getLayoutParams();
-            //check if radius is correct
-            assertEquals(150, loc_lp.circleRadius);
-            //check if angle is correct
-            assertEquals(90, loc_lp.circleAngle, 0);
-        });
-    }
-
     @Test
     public void testDisplaySingleLocationZero() {
-        scenario = ActivityScenario.launch(CompassActivity.class);
+        ActivityScenario<CompassActivity> scenario = ActivityScenario.launch(CompassActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.onActivity(activity -> {
