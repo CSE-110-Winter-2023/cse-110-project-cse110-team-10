@@ -63,7 +63,7 @@ public class CompassActivity extends AppCompatActivity {
                 float userLong = SavedUserLocation.getUserLongitude(preferences);
                 int numLocations = savedLocations.getNumLocations();
 
-                for(int i = 0; i <= numLocations; i++){
+                for(int i = 0; i < numLocations; i++){
                     float locLat = savedLocations.getLatitude(i);
                     float locLong = savedLocations.getLongitude(i);
                     float degree = DegreeCalculator.degreeBetweenCoordinates(userLat, userLong, locLat, locLong);
