@@ -22,6 +22,14 @@ public class MainActivity extends AppCompatActivity {
         {
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, 200);
         }
+
+        SavedLocations s1 = new SavedLocations(getSharedPreferences(getString(R.string.saveLocation), MODE_PRIVATE));
+        if(s1.getNumLocations() == 0)
+        {
+            Intent intent = new Intent(this,NewLocationActivity.class);
+            startActivity(intent);
+
+        }
     }
 
     public void onOpenCompassClick(View view) {
