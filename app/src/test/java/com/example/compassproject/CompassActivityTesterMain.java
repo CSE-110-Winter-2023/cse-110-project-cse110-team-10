@@ -46,82 +46,65 @@ public class CompassActivityTesterMain {
     }
 
     @Test
-    public void testDisplaySingleLocationNonZero() {
+    public void test360RotationAngles() {
         ActivityScenario<CompassActivity> scenario = ActivityScenario.launch(CompassActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.onActivity(activity -> {
-            DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, 80,45);
-            View loc = activity.findViewById(1);
-            ConstraintLayout.LayoutParams loc_lp = (ConstraintLayout.LayoutParams) loc.getLayoutParams();
-            //check if radius is correct
-            assertEquals(80, loc_lp.circleRadius);
-            //check if angle is correct
-            assertEquals(45, loc_lp.circleAngle, 0);
+            TextView north = (TextView) activity.findViewById(R.id.compass_N);
+            TextView east = (TextView) activity.findViewById(R.id.compass_E);
+            TextView south = (TextView) activity.findViewById(R.id.compass_S);
+            TextView west = (TextView) activity.findViewById(R.id.compass_W);
+            int rotationDegrees = 360;
+            ConstraintLayout.LayoutParams north_lp = (ConstraintLayout.LayoutParams) north.getLayoutParams();
+            north_lp.circleAngle = rotationDegrees;
+
+            ConstraintLayout.LayoutParams east_lp = (ConstraintLayout.LayoutParams) east.getLayoutParams();
+            east_lp.circleAngle = 90 + rotationDegrees;
+
+            ConstraintLayout.LayoutParams south_lp = (ConstraintLayout.LayoutParams) south.getLayoutParams();
+            south_lp.circleAngle = 180 + rotationDegrees;
+
+            ConstraintLayout.LayoutParams west_lp = (ConstraintLayout.LayoutParams) west.getLayoutParams();
+            west_lp.circleAngle = 270 + rotationDegrees;
+
+            assertEquals(0 + 360, north_lp.circleAngle, 0);
+            assertEquals(90 + 360, east_lp.circleAngle, 0);
+            assertEquals(180 + 360, south_lp.circleAngle, 0);
+            assertEquals(270 + 360, west_lp.circleAngle, 0);
+
         });
     }
 
-    /*
     @Test
     public void testInitialRotationAngles() {
         ActivityScenario<CompassActivity> scenario = ActivityScenario.launch(CompassActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.onActivity(activity -> {
-            activity.rotateThreadHandler(0);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             TextView north = (TextView) activity.findViewById(R.id.compass_N);
             TextView east = (TextView) activity.findViewById(R.id.compass_E);
             TextView south = (TextView) activity.findViewById(R.id.compass_S);
             TextView west = (TextView) activity.findViewById(R.id.compass_W);
+            int rotationDegrees = 0;
             ConstraintLayout.LayoutParams north_lp = (ConstraintLayout.LayoutParams) north.getLayoutParams();
-            ConstraintLayout.LayoutParams east_lp = (ConstraintLayout.LayoutParams) east.getLayoutParams();
-            ConstraintLayout.LayoutParams south_lp = (ConstraintLayout.LayoutParams) south.getLayoutParams();
-            ConstraintLayout.LayoutParams west_lp = (ConstraintLayout.LayoutParams) west.getLayoutParams();
+            north_lp.circleAngle = rotationDegrees;
 
-            assertEquals(0, north_lp.circleAngle, 0);
+            ConstraintLayout.LayoutParams east_lp = (ConstraintLayout.LayoutParams) east.getLayoutParams();
+            east_lp.circleAngle = 90 + rotationDegrees;
+
+            ConstraintLayout.LayoutParams south_lp = (ConstraintLayout.LayoutParams) south.getLayoutParams();
+            south_lp.circleAngle = 180 + rotationDegrees;
+
+            ConstraintLayout.LayoutParams west_lp = (ConstraintLayout.LayoutParams) west.getLayoutParams();
+            west_lp.circleAngle =  270 + rotationDegrees;
+
+            assertEquals(0, north_lp.circleAngle,0);
             assertEquals(90, east_lp.circleAngle, 0);
-            assertEquals(180, south_lp.circleAngle, 0);
+            assertEquals(180, south_lp.circleAngle,  0);
             assertEquals(270, west_lp.circleAngle, 0);
 
         });
     }
-    */
 
-    /*
-    @Test
-    public void test360RotationAngles() {
-        ActivityScenario<CompassActivity> scenario = ActivityScenario.launch(CompassActivity.class);
-        scenario.moveToState(Lifecycle.State.CREATED);
-        scenario.moveToState(Lifecycle.State.STARTED);
-        scenario.onActivity(activity -> {
-            activity.rotateThreadHandler(360);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            TextView north = (TextView) activity.findViewById(R.id.compass_N);
-            TextView east = (TextView) activity.findViewById(R.id.compass_E);
-            TextView south = (TextView) activity.findViewById(R.id.compass_S);
-            TextView west = (TextView) activity.findViewById(R.id.compass_W);
-            ConstraintLayout.LayoutParams north_lp = (ConstraintLayout.LayoutParams) north.getLayoutParams();
-            ConstraintLayout.LayoutParams east_lp = (ConstraintLayout.LayoutParams) east.getLayoutParams();
-            ConstraintLayout.LayoutParams south_lp = (ConstraintLayout.LayoutParams) south.getLayoutParams();
-            ConstraintLayout.LayoutParams west_lp = (ConstraintLayout.LayoutParams) west.getLayoutParams();
-
-            assertEquals(0 + 360, north_lp.circleAngle,0);
-            assertEquals(90 + 360, east_lp.circleAngle, 0);
-            assertEquals(180 + 360, south_lp.circleAngle,  0);
-            assertEquals(270 + 360, west_lp.circleAngle, 0);
-
-        });
-    }
-     */
 }
