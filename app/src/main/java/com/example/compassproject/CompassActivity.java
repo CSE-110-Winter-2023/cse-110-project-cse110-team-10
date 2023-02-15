@@ -89,18 +89,16 @@ public class CompassActivity extends AppCompatActivity {
     }
 
     public void onAddLocationClicked(View view) {
-        this.future.cancel(true);
+        if (this.future != null) {
+            this.future.cancel(true);
+        }
         Intent intent = new Intent(this, NewLocationActivity.class);
         startActivity(intent);
     }
 
-    private void rotateThreadHandler() {
+    public void rotateThreadHandler(int rotationDegrees) {
         this.future = backgroundThreadExecutor.submit(() -> {
-            int rotationDegrees = 0;
             do {
-                //TODO: find rotation constant
-                final int rotDegreesCopy = rotationDegrees;
-
                 //update angles for N,E,S,W letters
                 TextView north = (TextView) findViewById(R.id.compass_N);
                 TextView east = (TextView) findViewById(R.id.compass_E);
@@ -119,10 +117,6 @@ public class CompassActivity extends AppCompatActivity {
                 ConstraintLayout.LayoutParams west_lp = (ConstraintLayout.LayoutParams) west.getLayoutParams();
                 west_lp.circleAngle =  270 + rotationDegrees;
 
-                /*
-                 * TODO: do calculations for each locations
-                 * Remember:  view_deg = location_degrees + rotation_degrees
-                 */
 
                 runOnUiThread(() -> {
                     north.setLayoutParams(north_lp);
