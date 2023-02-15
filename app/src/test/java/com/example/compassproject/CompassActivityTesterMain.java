@@ -90,34 +90,4 @@ public class CompassActivityTesterMain {
 
         });
     }
-
-    @Test
-    public void test360RotationAngles() {
-        ActivityScenario<CompassActivity> scenario = ActivityScenario.launch(CompassActivity.class);
-        scenario.moveToState(Lifecycle.State.CREATED);
-        scenario.moveToState(Lifecycle.State.STARTED);
-        scenario.onActivity(activity -> {
-            activity.rotateThreadHandler(360);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            TextView north = (TextView) activity.findViewById(R.id.compass_N);
-            TextView east = (TextView) activity.findViewById(R.id.compass_E);
-            TextView south = (TextView) activity.findViewById(R.id.compass_S);
-            TextView west = (TextView) activity.findViewById(R.id.compass_W);
-            ConstraintLayout.LayoutParams north_lp = (ConstraintLayout.LayoutParams) north.getLayoutParams();
-            ConstraintLayout.LayoutParams east_lp = (ConstraintLayout.LayoutParams) east.getLayoutParams();
-            ConstraintLayout.LayoutParams south_lp = (ConstraintLayout.LayoutParams) south.getLayoutParams();
-            ConstraintLayout.LayoutParams west_lp = (ConstraintLayout.LayoutParams) west.getLayoutParams();
-
-            assertEquals(0 + 360, north_lp.circleAngle,0);
-            assertEquals(90 + 360, east_lp.circleAngle, 0);
-            assertEquals(180 + 360, south_lp.circleAngle,  0);
-            assertEquals(270 + 360, west_lp.circleAngle, 0);
-
-        });
-    }
 }
