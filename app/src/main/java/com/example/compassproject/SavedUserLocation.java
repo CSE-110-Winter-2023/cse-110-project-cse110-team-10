@@ -10,27 +10,26 @@ import androidx.lifecycle.LiveData;
 
 public class SavedUserLocation
 {
-    public static void saveUserLoc(LifecycleOwner owner, LocationService locationService, SharedPreferences preferences)
+    static float latitude;
+    static float longitude;
+
+    public static void saveUserLoc(LifecycleOwner owner, LocationService locationService)
     {
-        SharedPreferences.Editor editor = preferences.edit();
         LiveData<Pair<Double,Double>> loc = locationService.getLocation();
 
         loc.observe(owner, location-> {
-
-            editor.putFloat("User Latitude", Double.valueOf(location.first).floatValue());
-            editor.putFloat("User Longitude", Double.valueOf(location.second).floatValue());
-            editor.apply();
-
+            latitude = location.first.floatValue();
+            longitude = location.second.floatValue();
         });
     }
 
-    public static float getUserLatitude(SharedPreferences preferences)
+    public static float getUserLatitude()
     {
-        return preferences.getFloat("User Latitude", 100);
+        return latitude;
     }
 
-    public static float getUserLongitude(SharedPreferences preferences)
+    public static float getUserLongitude()
     {
-        return preferences.getFloat("User Longitude", 100);
+        return longitude;
     }
 }

@@ -48,17 +48,16 @@ import org.robolectric.shadows.ShadowApplication;
             scenario.moveToState(Lifecycle.State.STARTED);
             scenario.onActivity(activity -> {
 
-                SharedPreferences preferences = activity.getSharedPreferences("Location", Context.MODE_PRIVATE);
                 MockLocationService m1 = new MockLocationService(activity);
                 MutableLiveData<Pair<Double,Double>> coord = new MutableLiveData<>();
                 coord.setValue(new Pair(-12.924239968315463, -18.354989375000002));
 
                 m1.setLocation(coord);
 
-                SavedUserLocation.saveUserLoc(activity, m1, preferences);
+                SavedUserLocation.saveUserLoc(activity, m1);
 
-                assertEquals(-12.924239968315463, preferences.getFloat("User Latitude", 100), 0.001);
-                assertEquals(-18.354989375000002, preferences.getFloat("User Longitude", 100), 0.001);
+                assertEquals(-12.924239968315463, SavedUserLocation.getUserLatitude(), 0.001);
+                assertEquals(-18.354989375000002, SavedUserLocation.getUserLongitude(), 0.001);
             });
         }
 
@@ -69,28 +68,26 @@ import org.robolectric.shadows.ShadowApplication;
             scenario.moveToState(Lifecycle.State.CREATED);
             scenario.moveToState(Lifecycle.State.STARTED);
             scenario.onActivity(activity -> {
-
-                SharedPreferences preferences = activity.getSharedPreferences("Location", Context.MODE_PRIVATE);
                 MockLocationService m1 = new MockLocationService(activity);
                 MutableLiveData<Pair<Double,Double>> coord = new MutableLiveData<>();
                 coord.setValue(new Pair(33.344281538848165, -97.58838781250005));
 
                 m1.setLocation(coord);
 
-                SavedUserLocation.saveUserLoc(activity, m1, preferences);
+                SavedUserLocation.saveUserLoc(activity, m1);
 
-                assertEquals(33.344281538848165, preferences.getFloat("User Latitude", 100), 0.001);
-                assertEquals(-97.58838781250005, preferences.getFloat("User Longitude", 100), 0.001);
+                assertEquals(33.344281538848165, SavedUserLocation.getUserLatitude(), 0.001);
+                assertEquals(-97.58838781250005, SavedUserLocation.getUserLongitude(), 0.001);
 
                 MutableLiveData<Pair<Double,Double>> coord2 = new MutableLiveData<>();
                 coord2.setValue(new Pair(53.340702936615486, -87.06348546874996));
 
                 m1.setLocation(coord2);
 
-                SavedUserLocation.saveUserLoc(activity, m1, preferences);
+                SavedUserLocation.saveUserLoc(activity, m1);
 
-                assertEquals(53.340702936615486, preferences.getFloat("User Latitude", 100), 0.001);
-                assertEquals(-87.06348546874996, preferences.getFloat("User Longitude", 100), 0.001);
+                assertEquals(53.340702936615486, SavedUserLocation.getUserLatitude(), 0.001);
+                assertEquals(-87.06348546874996, SavedUserLocation.getUserLongitude(), 0.001);
 
             });
         }
