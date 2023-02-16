@@ -15,7 +15,7 @@ import android.widget.TextView;
 public class CompassActivity extends AppCompatActivity {
     static int radius;
     SavedLocations savedLocations;
-
+    SharedPreferences preferences;
     /*
      * TODO: Update locations and angles for compass_N, compass_E, compass_S, compass_W
      */
@@ -25,7 +25,9 @@ public class CompassActivity extends AppCompatActivity {
         setContentView(R.layout.activity_compass);
         storeUserLoc();
         savedLocations = new SavedLocations(getSharedPreferences("LocationData", MODE_PRIVATE));
-        SharedPreferences preferences = getSharedPreferences("Location", Context.MODE_PRIVATE);
+        preferences = getPreferences(Context.MODE_PRIVATE);
+
+
 
         final ImageView compass = (ImageView) findViewById(R.id.compass_face);
         ViewTreeObserver observer = compass.getViewTreeObserver();
@@ -67,14 +69,34 @@ public class CompassActivity extends AppCompatActivity {
                     float locLat = savedLocations.getLatitude(i);
                     float locLong = savedLocations.getLongitude(i);
                     float degree = DegreeCalculator.degreeBetweenCoordinates(userLat, userLong, locLat, locLong);
-                    DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, degree);
+                    CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, degree);
+                    loc_view.setIndex(i);
+                    DisplayLabels.displayPopUp(CompassActivity.this,loc_view);
                 }
                 compass.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
 
         storeUserLoc();
+
     }
+
+   /* private void displayPopUp(CompassActivity activity, CircleView loc_view)
+    {
+
+        loc_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SavedLocations savedLocations = new SavedLocations(getSharedPreferences("LocationData", MODE_PRIVATE));
+                float latitude = savedLocations.getLatitude(loc_view.getIndex());
+                float longitude = savedLocations.getLongitude(loc_view.getIndex());
+                String label = savedLocations.getLabel(loc_view.getIndex());
+                Utilities.showPopup(activity, label, "" + latitude + ", " + longitude);
+
+            }
+        });
+    }*/
+
 
     private void storeUserLoc() {
         SavedUserLocation.saveUserLoc(this, LocationService.singleton(this), getPreferences(MODE_PRIVATE));
