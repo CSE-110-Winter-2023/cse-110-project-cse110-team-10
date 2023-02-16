@@ -2,11 +2,13 @@ package com.example.compassproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.LiveData;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -23,10 +25,13 @@ public class CompassActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compass);
+        preferences = getPreferences(Context.MODE_PRIVATE);
         storeUserLoc();
         savedLocations = new SavedLocations(getSharedPreferences("LocationData", MODE_PRIVATE));
-        preferences = getPreferences(Context.MODE_PRIVATE);
-
+        float l = SavedUserLocation.getUserLatitude(preferences);
+        float lo = SavedUserLocation.getUserLongitude(preferences);
+        System.out.println("HELLO: " + l);
+        System.out.println("HELLO: " + lo);
 
 
         final ImageView compass = (ImageView) findViewById(R.id.compass_face);
@@ -61,6 +66,7 @@ public class CompassActivity extends AppCompatActivity {
                 //TODO: loop through all locations w correct degrees
                 /* degrees ==> SavedLocation.getDegrees(loc_id)
                  */;
+
                 float userLat = SavedUserLocation.getUserLatitude(preferences);
                 float userLong = SavedUserLocation.getUserLongitude(preferences);
                 int numLocations = savedLocations.getNumLocations();
@@ -68,6 +74,8 @@ public class CompassActivity extends AppCompatActivity {
                 for(int i = 0; i < numLocations; i++){
                     float locLat = savedLocations.getLatitude(i);
                     float locLong = savedLocations.getLongitude(i);
+                    System.out.println(userLat);
+                    System.out.println(userLong);
                     float degree = DegreeCalculator.degreeBetweenCoordinates(userLat, userLong, locLat, locLong);
                     CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, degree);
                     loc_view.setIndex(i);
@@ -81,25 +89,10 @@ public class CompassActivity extends AppCompatActivity {
 
     }
 
-   /* private void displayPopUp(CompassActivity activity, CircleView loc_view)
-    {
-
-        loc_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SavedLocations savedLocations = new SavedLocations(getSharedPreferences("LocationData", MODE_PRIVATE));
-                float latitude = savedLocations.getLatitude(loc_view.getIndex());
-                float longitude = savedLocations.getLongitude(loc_view.getIndex());
-                String label = savedLocations.getLabel(loc_view.getIndex());
-                Utilities.showPopup(activity, label, "" + latitude + ", " + longitude);
-
-            }
-        });
-    }*/
 
 
     private void storeUserLoc() {
-        SavedUserLocation.saveUserLoc(this, LocationService.singleton(this), getPreferences(MODE_PRIVATE));
+        SavedUserLocation.saveUserLoc(this, LocationService.singleton(this), getPreferences(Context.MODE_PRIVATE));
     }
 
     public void onAddLocationClicked(View view) {
