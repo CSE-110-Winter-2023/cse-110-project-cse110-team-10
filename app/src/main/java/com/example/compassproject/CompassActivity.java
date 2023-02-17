@@ -1,19 +1,17 @@
 package com.example.compassproject;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -25,6 +23,7 @@ public class CompassActivity extends AppCompatActivity {
     private ExecutorService backgroundThreadExecutor = Executors.newSingleThreadExecutor();
     private Future<Void> future;
 
+    ArrayList <CircleView> locArray = new ArrayList<>();
     private float currOrientation;
     private float latitude;
     private float longitude;
@@ -88,6 +87,25 @@ public class CompassActivity extends AppCompatActivity {
                 west_lp.circleRadius = rad;
                 west.setLayoutParams(west_lp);
 
+                // showing red dots which is saved user locations
+                for(int i = 0; i < savedLocations.getNumLocations(); i++){
+                    // Coordinates of current saved location
+                    float locLat = savedLocations.getLatitude(i);
+                    float locLong = savedLocations.getLongitude(i);
+
+                    // Degree if phone facing north
+                    float initDegree = DegreeCalculator.degreeBetweenCoordinates(latitude, longitude, locLat, locLong);
+
+                    // Degree for current phone direction
+                    float degree = DegreeCalculator.rotatingToPhoneOrientation(initDegree, currOrientation);
+
+                    // Create circle in the given angle
+                    CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, degree);
+                    locArray.add(loc_view);
+
+                    // TODO: Update instead of create new circle
+                }
+
                 //TODO: loop through all locations w correct degrees
                 /* degrees ==> SavedLocation.getDegrees(loc_id)
                  */
@@ -130,7 +148,7 @@ public class CompassActivity extends AppCompatActivity {
                                 float degree = DegreeCalculator.rotatingToPhoneOrientation(initDegree, orientationCopy);
 
                                 // Create circle in the given angle
-                                DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, degree);
+                                DisplayHelper.updateLocation(CompassActivity.this, locArray.get(i), rad-64, degree);
                                 // TODO: Update instead of create new circle
                             }
                         });
@@ -138,7 +156,7 @@ public class CompassActivity extends AppCompatActivity {
                         Log.d("Location", "(" + latitudeCopy + ", " + longitudeCopy + ")");
                         Log.d("Orientation", "" + orientationCopy);
 
-                        Thread.sleep(250);
+                        Thread.sleep(100);
                     } while(true);
                 });
 
