@@ -83,6 +83,10 @@ public class OrientationService implements SensorEventListener {
         return this.azimuth;
     }
 
+    public static Float getMostRecentOrientation(Activity activity) {
+        return singleton(activity).getOrientation().getValue();
+    }
+
     public void setMockOrientationSource(MutableLiveData<Float> mockDataSource){
         unregisterSensorListeners();
         this.azimuth = mockDataSource;

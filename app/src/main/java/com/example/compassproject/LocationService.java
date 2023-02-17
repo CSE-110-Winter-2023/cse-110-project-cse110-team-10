@@ -20,6 +20,7 @@ public class LocationService implements LocationListener {
     private Activity activity;
 
     private MutableLiveData<Pair<Double,Double>> locationValue;
+    private Pair<Double, Double> currLoc;
 
     private final LocationManager locationManager;
 
@@ -75,14 +76,12 @@ public class LocationService implements LocationListener {
     {
         return this.locationValue;
     }
+
     public void setMockOrientationSource(MutableLiveData<Pair<Double, Double>> mockDataSource)
     {
         unregisterLocationListener();
         this.locationValue = mockDataSource;
     }
-
-
-
 }
 
 
