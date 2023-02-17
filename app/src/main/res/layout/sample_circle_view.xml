@@ -4,6 +4,7 @@
     android:layout_height="match_parent">
 
     <com.example.compassproject.CircleView
+        android:elevation="4dp"
         android:layout_width="10dp"
         android:layout_height="10dp"
         android:background="#00FF00" />
