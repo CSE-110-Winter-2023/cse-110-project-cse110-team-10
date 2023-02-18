@@ -3,6 +3,7 @@ package com.example.compassproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.LiveData;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -163,6 +165,35 @@ public class CompassActivity extends AppCompatActivity {
                 compass.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+    }
+
+    private void onOrientationChanged(Float orientation) {
+        currOrientation = (float)Math.toDegrees(orientation);
+    }
+    public void reobserveOrientation() {
+        LiveData<Float> orientationData = OrientationService.singleton(this).getOrientation();
+        orientationData.observe(this, this::onOrientationChanged);
+    }
+
+    public float getCurrOrientation(){
+        return currOrientation;
+    }
+
+    private void onLocationChanged(Pair<Double, Double> loc) {
+        latitude = loc.first.floatValue();
+        longitude = loc.second.floatValue();
+    }
+    public void reobserveLocation() {
+        LiveData<Pair<Double, Double>> locationData = LocationService.singleton(this).getLocation();
+        locationData.observe(this, this::onLocationChanged);
+    }
+
+    public float getLatitude(){
+        return latitude;
+    }
+
+    public float getLongitude(){
+        return longitude;
     }
 
     public void onAddLocationClicked(View view) {

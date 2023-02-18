@@ -58,7 +58,7 @@ public class LocationService implements LocationListener {
             throw new IllegalStateException("App needs location permission to get latest location");
         }
 
-        this.locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
+        this.locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0,this);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class LocationService implements LocationListener {
         return this.locationValue;
     }
 
-    public void setMockOrientationSource(MutableLiveData<Pair<Double, Double>> mockDataSource)
+    public void setMockLocationSource(MutableLiveData<Pair<Double, Double>> mockDataSource)
     {
         unregisterLocationListener();
         this.locationValue = mockDataSource;
