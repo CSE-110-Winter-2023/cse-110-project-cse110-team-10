@@ -45,6 +45,7 @@ public class US2TesterMain
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.onActivity(activity -> {
 
+
             int radius = 1;
             //calculate north degree
             float degreeN = DegreeCalculator.degreeBetweenCoordinates(0.0, 0.0, 10.0, 0.0);
