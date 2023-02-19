@@ -46,9 +46,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="142dp"
-        android:text="Submit"
         android:onClick="onSubmitLocationClicked"
+        android:text="Submit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/orientationInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="33dp"
+        android:layout_marginBottom="39dp"
+        android:ems="10"
+        android:hint="Orientation"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/orientationSubmitBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:onClick="onOrientationSubmitClicked"
+        android:text="OK"
+        app:layout_constraintBaseline_toBaselineOf="@+id/orientationInput"
+        app:layout_constraintStart_toEndOf="@+id/orientationInput" />
 </androidx.constraintlayout.widget.ConstraintLayout>

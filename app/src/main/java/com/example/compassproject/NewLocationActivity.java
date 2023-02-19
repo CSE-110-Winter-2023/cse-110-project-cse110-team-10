@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
 
 public class NewLocationActivity extends AppCompatActivity {
 
@@ -56,5 +57,26 @@ public class NewLocationActivity extends AppCompatActivity {
         TextView label_input = findViewById(R.id.labelInput);
         String label = label_input.getText().toString();
         return label;
+    }
+
+    public void onOrientationSubmitClicked(View view) {
+        TextView orientation = findViewById(R.id.orientationInput);
+        SavedLocations sl = new SavedLocations(getSharedPreferences(getString(R.string.saveLocation), MODE_PRIVATE));
+
+        if(orientation.getText().toString().equals("")){
+            Utilities.showPopup(this, "Error", "Please enter an orientation");
+        }
+        else if(sl.getNumLocations() == 0){
+            Utilities.showPopup(this, "Error", "Please enter a location before setting the orientation");
+        }
+        else{
+            OrientationService os = OrientationService.singleton(this);
+            MutableLiveData<Float> newOrientation = new MutableLiveData<>();
+            newOrientation.setValue((float) Math.toRadians(Float.parseFloat(orientation.getText().toString())));
+            os.setMockOrientationSource(newOrientation);
+
+            Intent intent = new Intent(this, CompassActivity.class);
+            startActivity(intent);
+        }
     }
 }
