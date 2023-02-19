@@ -1,8 +1,14 @@
 package com.example.compassproject;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.LiveData;
+
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -29,7 +35,6 @@ public class CompassActivity extends AppCompatActivity {
     private float currOrientation;
     private float latitude;
     private float longitude;
-
     /*
      * TODO: Update locations and angles for compass_N, compass_E, compass_S, compass_W
      */
@@ -104,8 +109,9 @@ public class CompassActivity extends AppCompatActivity {
                     // Create circle in the given angle
                     CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, degree);
                     locArray.add(loc_view);
-
-                    // TODO: Update instead of create new circle
+                    
+                    loc_view.setIndex(i);
+                    DisplayLabels.displayPopUp(CompassActivity.this,loc_view);
                 }
 
                 //TODO: loop through all locations w correct degrees

@@ -1,6 +1,15 @@
 package com.example.compassproject;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Intent;
+import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
+
+import android.content.SharedPreferences;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -25,6 +34,7 @@ public class DisplayHelper {
         cs.constrainCircle(loc_view.getId(), R.id.compass_face, radius, degrees);
 
         cs.applyTo(cl);
+
         return loc_view;
     }
 
