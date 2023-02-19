@@ -2,11 +2,13 @@ package com.example.compassproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.LiveData;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -15,7 +17,7 @@ import android.widget.TextView;
 public class CompassActivity extends AppCompatActivity {
     static int radius;
     SavedLocations savedLocations;
-
+    SharedPreferences preferences;
     /*
      * TODO: Update locations and angles for compass_N, compass_E, compass_S, compass_W
      */
@@ -23,9 +25,10 @@ public class CompassActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compass);
+        preferences = getPreferences(Context.MODE_PRIVATE);
         storeUserLoc();
         savedLocations = new SavedLocations(getSharedPreferences("LocationData", MODE_PRIVATE));
-        SharedPreferences preferences = getSharedPreferences("Location", Context.MODE_PRIVATE);
+
 
         final ImageView compass = (ImageView) findViewById(R.id.compass_face);
         ViewTreeObserver observer = compass.getViewTreeObserver();
@@ -59,6 +62,7 @@ public class CompassActivity extends AppCompatActivity {
                 //TODO: loop through all locations w correct degrees
                 /* degrees ==> SavedLocation.getDegrees(loc_id)
                  */;
+
                 float userLat = SavedUserLocation.getUserLatitude(preferences);
                 float userLong = SavedUserLocation.getUserLongitude(preferences);
                 int numLocations = savedLocations.getNumLocations();
@@ -67,17 +71,22 @@ public class CompassActivity extends AppCompatActivity {
                     float locLat = savedLocations.getLatitude(i);
                     float locLong = savedLocations.getLongitude(i);
                     float degree = DegreeCalculator.degreeBetweenCoordinates(userLat, userLong, locLat, locLong);
-                    DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, degree);
+                    CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, degree);
+                    loc_view.setIndex(i);
+                    DisplayLabels.displayPopUp(CompassActivity.this,loc_view);
                 }
                 compass.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
 
         storeUserLoc();
+
     }
 
+
+
     private void storeUserLoc() {
-        SavedUserLocation.saveUserLoc(this, LocationService.singleton(this), getPreferences(MODE_PRIVATE));
+        SavedUserLocation.saveUserLoc(this, LocationService.singleton(this), getPreferences(Context.MODE_PRIVATE));
     }
 
     public void onAddLocationClicked(View view) {
