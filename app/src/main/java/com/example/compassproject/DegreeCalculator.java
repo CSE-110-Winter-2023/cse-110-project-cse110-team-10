@@ -34,6 +34,7 @@ public class DegreeCalculator {
         return degree;
     }
 
-
-
+    public static float rotatingToPhoneOrientation(float originalAngle, float phoneOrientation){
+        return fixNegative(originalAngle - phoneOrientation);
+    }
 }

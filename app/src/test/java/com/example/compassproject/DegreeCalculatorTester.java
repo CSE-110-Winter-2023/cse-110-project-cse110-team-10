@@ -2,9 +2,6 @@ package com.example.compassproject;
 
 import static org.junit.Assert.assertEquals;
 
-import android.content.SharedPreferences;
-import android.renderscript.ScriptGroup;
-
 import org.junit.Test;
 
 public class DegreeCalculatorTester
@@ -38,4 +35,20 @@ public class DegreeCalculatorTester
     {
         assertEquals(45, DegreeCalculator.fixNegative(45), 0);
     }
+
+    @Test
+    public void phoneIsPointingNorth(){
+        assertEquals(90, DegreeCalculator.rotatingToPhoneOrientation(90, 0), 0);
+    }
+
+    @Test
+    public void phoneIsPointingEast(){
+        assertEquals(40, DegreeCalculator.rotatingToPhoneOrientation(130, 90), 0);
+    }
+
+    @Test
+    public void phoneIsRotatingPassingLocation(){
+        assertEquals(330, DegreeCalculator.rotatingToPhoneOrientation(60, 90), 0);
+    }
 }
+

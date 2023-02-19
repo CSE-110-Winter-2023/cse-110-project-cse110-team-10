@@ -6,18 +6,35 @@ import androidx.lifecycle.LiveData;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.LiveData;
+
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 public class CompassActivity extends AppCompatActivity {
     static int radius;
     SavedLocations savedLocations;
-    SharedPreferences preferences;
+
+    private ExecutorService backgroundThreadExecutor = Executors.newSingleThreadExecutor();
+    private Future<Void> future;
+
+    ArrayList <CircleView> locArray = new ArrayList<>();
+    private float currOrientation;
+    private float latitude;
+    private float longitude;
     /*
      * TODO: Update locations and angles for compass_N, compass_E, compass_S, compass_W
      */
@@ -25,24 +42,42 @@ public class CompassActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compass);
-        preferences = getPreferences(Context.MODE_PRIVATE);
-        storeUserLoc();
+
+        // Get coordinates and labels entered by user
         savedLocations = new SavedLocations(getSharedPreferences("LocationData", MODE_PRIVATE));
 
+        // Create location and orientation services
+        LocationService ls = LocationService.singleton(this);
+        OrientationService os = OrientationService.singleton(this);
 
+        // Continuously update location data to local fields
+        ls.getLocation().observe(this, location -> {
+            latitude = location.first.floatValue();
+            longitude = location.second.floatValue();
+        });
+
+        // Continuously update orientation data to local fields
+        os.getOrientation().observe(this, orientation -> {
+            currOrientation = (float) Math.toDegrees(orientation);
+        });
+
+        // Make sure compass has been set up on UI
         final ImageView compass = (ImageView) findViewById(R.id.compass_face);
         ViewTreeObserver observer = compass.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                // Access UI elements for cardinal directions
                 TextView north = (TextView) findViewById(R.id.compass_N);
                 TextView east = (TextView) findViewById(R.id.compass_E);
                 TextView south = (TextView) findViewById(R.id.compass_S);
                 TextView west = (TextView) findViewById(R.id.compass_W);
 
+                // Calculate radius
                 int rad = compass.getHeight() / 2;
                 radius = rad;
 
+                // Placing cardinal direction labels in correct initial location
                 ConstraintLayout.LayoutParams north_lp = (ConstraintLayout.LayoutParams) north.getLayoutParams();
                 north_lp.circleRadius = rad;
                 north.setLayoutParams(north_lp);
@@ -59,34 +94,112 @@ public class CompassActivity extends AppCompatActivity {
                 west_lp.circleRadius = rad;
                 west.setLayoutParams(west_lp);
 
-                //TODO: loop through all locations w correct degrees
-                /* degrees ==> SavedLocation.getDegrees(loc_id)
-                 */;
-
-                float userLat = SavedUserLocation.getUserLatitude(preferences);
-                float userLong = SavedUserLocation.getUserLongitude(preferences);
-                int numLocations = savedLocations.getNumLocations();
-
-                for(int i = 0; i < numLocations; i++){
+                // showing red dots which is saved user locations
+                for(int i = 0; i < savedLocations.getNumLocations(); i++){
+                    // Coordinates of current saved location
                     float locLat = savedLocations.getLatitude(i);
                     float locLong = savedLocations.getLongitude(i);
-                    float degree = DegreeCalculator.degreeBetweenCoordinates(userLat, userLong, locLat, locLong);
+
+                    // Degree if phone facing north
+                    float initDegree = DegreeCalculator.degreeBetweenCoordinates(latitude, longitude, locLat, locLong);
+
+                    // Degree for current phone direction
+                    float degree = DegreeCalculator.rotatingToPhoneOrientation(initDegree, currOrientation);
+
+                    // Create circle in the given angle
                     CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, degree);
+                    locArray.add(loc_view);
+                    
                     loc_view.setIndex(i);
                     DisplayLabels.displayPopUp(CompassActivity.this,loc_view);
                 }
+
+                //TODO: loop through all locations w correct degrees
+                /* degrees ==> SavedLocation.getDegrees(loc_id)
+                 */
+
+                // Run background thread to update UI with location and orientation every 250 ms
+                CompassActivity.this.future = backgroundThreadExecutor.submit(() -> {
+                    do{
+                        // Make final copies of most updated location and orientation data
+                        final float latitudeCopy = latitude;
+                        final float longitudeCopy = longitude;
+                        final float orientationCopy = currOrientation;
+
+                        // Make final copy of number of locations added
+                        int numLocations = savedLocations.getNumLocations();
+                        final int numLocationsCopy = numLocations;
+
+                        runOnUiThread(() -> {
+                            // Calculate new angle of cardinal direction labels
+                            north_lp.circleAngle = -orientationCopy;
+                            east_lp.circleAngle = 90 - orientationCopy;
+                            south_lp.circleAngle = 180 - orientationCopy;
+                            west_lp.circleAngle = 270 - orientationCopy;
+
+                            // Place cardinal direction labels in correct location
+                            north.setLayoutParams(north_lp);
+                            east.setLayoutParams(east_lp);
+                            south.setLayoutParams(south_lp);
+                            west.setLayoutParams(west_lp);
+
+                            // Create circles representing relative locations
+                            for(int i = 0; i < numLocationsCopy; i++){
+                                // Coordinates of current saved location
+                                float locLat = savedLocations.getLatitude(i);
+                                float locLong = savedLocations.getLongitude(i);
+
+                                // Degree if phone facing north
+                                float initDegree = DegreeCalculator.degreeBetweenCoordinates(latitudeCopy, longitudeCopy, locLat, locLong);
+
+                                // Degree for current phone direction
+                                float degree = DegreeCalculator.rotatingToPhoneOrientation(initDegree, orientationCopy);
+
+                                // Create circle in the given angle
+                                DisplayHelper.updateLocation(CompassActivity.this, locArray.get(i), rad-64, degree);
+                                // TODO: Update instead of create new circle
+                            }
+                        });
+
+                        Log.d("Location", "(" + latitudeCopy + ", " + longitudeCopy + ")");
+                        Log.d("Orientation", "" + orientationCopy);
+
+                        Thread.sleep(100);
+                    } while(true);
+                });
+
                 compass.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
-
-        storeUserLoc();
-
     }
 
+    private void onOrientationChanged(Float orientation) {
+        currOrientation = (float)Math.toDegrees(orientation);
+    }
+    public void reobserveOrientation() {
+        LiveData<Float> orientationData = OrientationService.singleton(this).getOrientation();
+        orientationData.observe(this, this::onOrientationChanged);
+    }
 
+    public float getCurrOrientation(){
+        return currOrientation;
+    }
 
-    private void storeUserLoc() {
-        SavedUserLocation.saveUserLoc(this, LocationService.singleton(this), getPreferences(Context.MODE_PRIVATE));
+    private void onLocationChanged(Pair<Double, Double> loc) {
+        latitude = loc.first.floatValue();
+        longitude = loc.second.floatValue();
+    }
+    public void reobserveLocation() {
+        LiveData<Pair<Double, Double>> locationData = LocationService.singleton(this).getLocation();
+        locationData.observe(this, this::onLocationChanged);
+    }
+
+    public float getLatitude(){
+        return latitude;
+    }
+
+    public float getLongitude(){
+        return longitude;
     }
 
     public void onAddLocationClicked(View view) {
