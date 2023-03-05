@@ -49,5 +49,4 @@ public class LocationAPITesterMain {
         assertNull(singleTon.getLocation(loc1.public_code));
 
     }
-
 }
