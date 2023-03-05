@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LiveData;
@@ -71,14 +70,7 @@ public class LocationDatabaseTesterMain {
         itemLive.observeForever(observer);
         Location item = itemLive.getValue();
 
-        assertEquals(code, item.public_code);
-        assertEquals(insertedItem.private_code, item.private_code);
-        assertEquals(insertedItem.label, item.label);
-        assertEquals(insertedItem.latitude, item.latitude, 0.01);
-        assertEquals(insertedItem.longitude, item.longitude, 0.01);
-        assertEquals(insertedItem.is_listed_publicly, item.is_listed_publicly);
-        assertEquals(insertedItem.created_at, item.created_at);
-        assertEquals(insertedItem.updated_at, item.updated_at);
+        assertTrue(item.equals(insertedItem));
     }
 
     @Test
