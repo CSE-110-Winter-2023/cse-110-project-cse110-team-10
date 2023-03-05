@@ -12,11 +12,7 @@
     <string name="Add_Friends_submit_button">Submit</string>
     <string name="Add_Friends_Back_button">Back</string>
     <string name="Add_Friends_Label">Add Friends Page</string>
+    <string name="add_friend">Add Friend</string>
 
 
-
-    <string name="location_submit_button">Submit</string>
-    <string name="new_location_label">New Location</string>
-    <string name="coordinates_input_hint">Coordinates</string>
-    <string name="label_input_hint">Label</string>
 </resources>
