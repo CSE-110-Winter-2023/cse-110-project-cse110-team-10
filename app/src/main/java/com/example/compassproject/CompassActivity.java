@@ -2,10 +2,12 @@ package com.example.compassproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.LiveData;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -161,8 +163,8 @@ public class CompassActivity extends AppCompatActivity {
                             }
                         });
 
-                        Log.d("Location", "(" + latitudeCopy + ", " + longitudeCopy + ")");
-                        Log.d("Orientation", "" + orientationCopy);
+//                        Log.d("Location", "(" + latitudeCopy + ", " + longitudeCopy + ")");
+//                        Log.d("Orientation", "" + orientationCopy);
 
                         Thread.sleep(100);
                     } while(true);
@@ -202,8 +204,8 @@ public class CompassActivity extends AppCompatActivity {
         return longitude;
     }
 
-    public void onAddLocationClicked(View view) {
-        Intent intent = new Intent(this, NewLocationActivity.class);
+    public void onAddFriendsButtonClicked(View view) {
+        Intent intent = new Intent(this, AddFriendsActivity.class);
         startActivity(intent);
     }
 
