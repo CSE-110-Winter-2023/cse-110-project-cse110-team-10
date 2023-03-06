@@ -90,7 +90,7 @@ public class LocationRepository {
         // making live data to postValue
         MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
         // Calling getLocationAsync() to get the 1st location data
-        locationMutableLiveData.postValue(LocationAPI.provide().getLocationAsync(public_code));
+        //locationMutableLiveData.postValue(LocationAPI.provide().getLocationAsync(public_code));
 
         // getting the most updated live data from server every 3s
         var executor = Executors.newSingleThreadScheduledExecutor();

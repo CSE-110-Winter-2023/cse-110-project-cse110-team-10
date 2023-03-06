@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.AnyThread;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -54,13 +55,13 @@ public class LocationAPI {
 
     // getLocation Asynchronously
     @AnyThread
-    public Location getLocationAsync(String public_code) {
+    public Future<Location> getLocationAsync(String public_code) {
         var executor = Executors.newSingleThreadExecutor();
         var future = executor.submit(() -> getLocation(public_code));
 
         // We can use future.get(1, SECONDS) to wait for the result.
         try {
-            return future.get(1, TimeUnit.SECONDS);
+            return future;   // .get(1, TimeUnit.SECONDS); Future return type
         } catch (Exception e) {
             e.printStackTrace();
         }
