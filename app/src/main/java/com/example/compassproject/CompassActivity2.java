@@ -4,7 +4,6 @@ package com.example.compassproject;
 
 import android.os.Bundle;
 import android.util.Pair;
-import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.compassproject.ViewModel.CompassViewModel;
@@ -63,7 +61,6 @@ public class CompassActivity2 extends AppCompatActivity {
                 ls.getLocation().observe(CompassActivity2.this, location -> {
                     updateCoordinates(location);
                     updateAllFriendLocations();
-
                 });
 
                 // Continuously update orientation data to local fields
@@ -164,15 +161,15 @@ public class CompassActivity2 extends AppCompatActivity {
             Location currLoc = currLocLive.getValue();
 
             // Create circle in the given angle
-            CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc));
-            locMap.put(currLoc.public_code, loc_view);
+            //CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc));
+            //locMap.put(currLoc.public_code, loc_view);
 
             // caching background thread
             locationArray.add(currLocLive);
 
             //Will be replaced with new code for handling CircleView vs Label
-            loc_view.setIndex(i);
-            DisplayLabels.displayPopUp(CompassActivity.this,loc_view);
+            //loc_view.setIndex(i);
+            //DisplayLabels.displayPopUp(CompassActivity.this,loc_view);
 
             // Set observer on LiveData so UI only updates when there is a change
             currLocLive.observe(this, this::updateFriendLocations);
@@ -197,6 +194,6 @@ public class CompassActivity2 extends AppCompatActivity {
 
     private void updateFriendLocations(Location location) {
         // Update circle in the given angle
-        DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location));
+        //DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location));
     }
 }

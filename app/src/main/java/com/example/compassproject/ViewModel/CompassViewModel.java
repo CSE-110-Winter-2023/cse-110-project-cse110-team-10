@@ -19,7 +19,6 @@ public class CompassViewModel extends AndroidViewModel {
     private LiveData<Location> location;
     private final LocationRepository locRepo;
 
-
     public CompassViewModel(@NonNull Application application) {
         super(application);
         var context = application.getApplicationContext();
@@ -35,11 +34,15 @@ public class CompassViewModel extends AndroidViewModel {
     }
     public List<String> getAllFriendUIDs(){
         //TODO: GETTING OUR FRIEND's UID FROM DATABASE
-        return new ArrayList<String>();
+        var list = new ArrayList<String>();
+        list.add("van");
+        list.add("Kanishk");
+        return list;
     }
 
     public LiveData<Location> getLiveLocation(String public_code){
-        return locRepo.getSynced(public_code);
+        //return locRepo.getSynced(public_code);
+        return locRepo.getRemote(public_code);
     }
 
 }

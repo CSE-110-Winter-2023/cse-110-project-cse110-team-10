@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer;
 
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class LocationRepository {
@@ -29,7 +30,7 @@ public class LocationRepository {
      *
      * This method will always prefer the newest version of the note.
      *
-     * @param location the title of the note
+     * @param public_code the public code of the location
      * @return a LiveData object that will be updated when the note is updated locally or remotely.
      */
     public LiveData<Location> getSynced(String public_code) {
@@ -43,7 +44,7 @@ public class LocationRepository {
         };
 
         // If we get a local update, pass it on.
-        location.addSource(getLocal(public_code), location::postValue);
+        //location.addSource(getLocal(public_code), location::postValue);
         // If we get a remote update, update the local version (triggering the above observer)
         location.addSource(getRemote(public_code), updateFromRemote);
 
@@ -90,7 +91,9 @@ public class LocationRepository {
         // making live data to postValue
         MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
         // Calling getLocationAsync() to get the 1st location data
-        locationMutableLiveData.postValue(LocationAPI.provide().getLocationAsync(public_code));
+        Location currLoc = LocationAPI.provide().getLocationAsync(public_code);
+        //Log.i("GET REMOTE", currLoc.toJSON());
+        locationMutableLiveData.setValue(currLoc);
 
         // getting the most updated live data from server every 3s
         var executor = Executors.newSingleThreadScheduledExecutor();
