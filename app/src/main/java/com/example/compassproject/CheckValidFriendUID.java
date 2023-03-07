@@ -15,10 +15,12 @@ public class CheckValidFriendUID
         String friend_uid = friend.uid;
         LocationAPI singleton = LocationAPI.provide();
 
+        //TODO Remove this code once implemented in Location API
         Future<Location> gotLocation = singleton.getLocationAsync(friend_uid);
         while(!gotLocation.isDone()) {;}
 
         //check if valid UID
+        //TODO Remove Try Catch and revert if Statement once Location API is completed
         try {
             if(singleton.getLocationAsync(friend_uid).get(1, TimeUnit.SECONDS) == null)
             {
@@ -32,6 +34,7 @@ public class CheckValidFriendUID
             e.printStackTrace();
         }
 
+        //TODO Remove once if statement is taken out of Try Catch
         return false;
     }
 }
