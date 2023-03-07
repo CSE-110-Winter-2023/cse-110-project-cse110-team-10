@@ -26,6 +26,9 @@ import java.util.concurrent.Future;
 
 public class CompassActivity extends AppCompatActivity {
     static int radius;
+
+    //maximum zoom level on compass (in miles)
+    static int maxDistance = 1;
     SavedLocations savedLocations;
 
     private ExecutorService backgroundThreadExecutor = Executors.newSingleThreadExecutor();
@@ -54,6 +57,7 @@ public class CompassActivity extends AppCompatActivity {
         ls.getLocation().observe(this, location -> {
             latitude = location.first.floatValue();
             longitude = location.second.floatValue();
+
         });
 
         // Continuously update orientation data to local fields
@@ -105,9 +109,10 @@ public class CompassActivity extends AppCompatActivity {
 
                     // Degree for current phone direction
                     float degree = DegreeCalculator.rotatingToPhoneOrientation(initDegree, currOrientation);
+                    double distance = DistanceCalculator.distanceBetweenCoordinates(latitude, longitude, locLat, locLong);
 
                     // Create circle in the given angle
-                    CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, degree);
+                    CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad - 64, degree, distance, maxDistance);
                     locArray.add(loc_view);
                     
                     loc_view.setIndex(i);
@@ -153,11 +158,11 @@ public class CompassActivity extends AppCompatActivity {
                                 float initDegree = DegreeCalculator.degreeBetweenCoordinates(latitudeCopy, longitudeCopy, locLat, locLong);
 
                                 // Degree for current phone direction
-                                float degree = DegreeCalculator.rotatingToPhoneOrientation(initDegree, orientationCopy);
+                                // Degree for current phone direction
+                                float degree = DegreeCalculator.rotatingToPhoneOrientation(initDegree, currOrientation);
+                                double distance = DistanceCalculator.distanceBetweenCoordinates(latitudeCopy, longitudeCopy, locLat, locLong);
 
-                                // Create circle in the given angle
-                                DisplayHelper.updateLocation(CompassActivity.this, locArray.get(i), rad-64, degree);
-                                // TODO: Update instead of create new circle
+                                DisplayHelper.updateLocation(CompassActivity.this, locArray.get(i), rad - 64, degree, distance, maxDistance);
                             }
                         });
 

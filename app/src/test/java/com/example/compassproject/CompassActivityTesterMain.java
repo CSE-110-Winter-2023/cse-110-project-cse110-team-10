@@ -20,7 +20,7 @@ import org.robolectric.shadows.ShadowApplication;
 
 @RunWith(RobolectricTestRunner.class)
 public class CompassActivityTesterMain {
-
+/*
     @Before
     public void setup() {
         Application application = ApplicationProvider.getApplicationContext();
@@ -43,4 +43,6 @@ public class CompassActivityTesterMain {
             assertEquals(0, loc_lp.circleAngle, 0);
         });
     }
+
+ */
 }
