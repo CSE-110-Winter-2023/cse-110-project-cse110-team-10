@@ -22,16 +22,19 @@ import com.example.compassproject.model.LocationRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class CompassActivity2 extends AppCompatActivity {
     private HashMap<String, CircleView> locMap = new HashMap<>();
     private double currOrientation;
     private double latitude;
     private double longitude;
-
     //set initial zoom to 0-1 miles
     private int radius = 1;
     private ImageView compass;
+
+    //the radius of the compass in miles
+    private int zoomRadius = 10;
 
     CompassViewModel viewModel;
 
@@ -163,8 +166,8 @@ public class CompassActivity2 extends AppCompatActivity {
             LiveData<Location> currLocLive = viewModel.getLiveLocation(friendList.get(i)); // Move to ViewModel
             Location currLoc = currLocLive.getValue();
 
-            // Create circle in the given angle
-            CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity2.this, 1, radius-64, getDegree(currLoc), 0.0, 0.0);
+            // Create circle in the given angle & given distance
+            CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity2.this, 1, radius-64, getDegree(currLoc), getDistance(currLoc), zoomRadius);
             locMap.put(currLoc.public_code, loc_view);
 
             // caching background thread
@@ -191,12 +194,20 @@ public class CompassActivity2 extends AppCompatActivity {
         return DegreeCalculator.rotatingToPhoneOrientation(initDegree, (float) currOrientation);
     }
 
+    private double getDistance(Location location){
+        double locLat = location.latitude;
+        double locLong = location.longitude;
+
+        double distance = DistanceCalculator.distanceBetweenCoordinates(latitude, longitude, locLat, locLong);
+        return distance;
+    }
+
     private void updateOrientation(Float orientation) {
         currOrientation = orientation;
     }
 
     private void updateFriendLocations(Location location) {
         // Update circle in the given angle
-        DisplayHelper.updateLocation(CompassActivity2.this, locMap.get(location.public_code), radius-64,  getDegree(location));
+        DisplayHelper.updateLocation(CompassActivity2.this, Objects.requireNonNull(locMap.get(location.public_code)), radius-64,  getDegree(location), getDistance(location), zoomRadius);
     }
 }
