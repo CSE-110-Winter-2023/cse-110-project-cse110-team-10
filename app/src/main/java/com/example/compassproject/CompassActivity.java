@@ -112,7 +112,7 @@ public class CompassActivity extends AppCompatActivity {
                     double distance = DistanceCalculator.distanceBetweenCoordinates(latitude, longitude, locLat, locLong);
 
                     // Create circle in the given angle
-                    CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad - 64, degree, distance, maxDistance);
+                    CircleView loc_view = (CircleView) DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad - 64, degree, distance, maxDistance, "Emma");
                     locArray.add(loc_view);
                     
                     loc_view.setIndex(i);
@@ -162,7 +162,7 @@ public class CompassActivity extends AppCompatActivity {
                                 float degree = DegreeCalculator.rotatingToPhoneOrientation(initDegree, currOrientation);
                                 double distance = DistanceCalculator.distanceBetweenCoordinates(latitudeCopy, longitudeCopy, locLat, locLong);
 
-                                DisplayHelper.updateLocation(CompassActivity.this, locArray.get(i), rad - 64, degree, distance, maxDistance);
+                                DisplayHelper.updateLocation(CompassActivity.this, locArray.get(i), rad - 64, degree, distance, maxDistance, "Emma");
                             }
                         });
 
