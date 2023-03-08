@@ -1,5 +1,6 @@
 package com.example.compassproject;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -23,22 +24,26 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, 200);
         }
 
-        SavedLocations s1 = new SavedLocations(getSharedPreferences(getString(R.string.saveLocation), MODE_PRIVATE));
-        if(s1.getNumLocations() == 0)
+        //request internet permission
+        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED)
         {
-            Intent intent = new Intent(this,NewLocationActivity.class);
-            startActivity(intent);
-
+            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.INTERNET}, 200);
+            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_NETWORK_STATE}, 200);
         }
+
+
+        //TODO: Implement check if user name has already been inputted
+        /*Intent intent = new Intent(this,CompassActivity.class);
+        startActivity(intent);*/
+
+
     }
 
-    public void onOpenCompassClick(View view) {
-        Intent intent = new Intent(this, CompassActivity.class);
-        startActivity(intent);
-    }
-
-    public void onNewLocationClick(View view) {
-        Intent intent = new Intent(this, NewLocationActivity.class);
+    //temporary onClick until enter name activity is implemented
+    public void GoToCompassView(View view)
+    {
+        Intent intent = new Intent(this,CompassActivity.class);
         startActivity(intent);
     }
 }
