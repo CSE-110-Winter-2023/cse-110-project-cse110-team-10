@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.compassproject.ViewModel.CompassViewModel;
 import com.example.compassproject.model.Location;
-import com.example.compassproject.model.LocationRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -161,7 +160,7 @@ public class CompassActivity extends AppCompatActivity {
 
         // showing red dots which is saved user locations
         for(int i = 0; i < numFriends; i++){
-            LiveData<Location> currLocLive = viewModel.getLiveLocation(friendList.get(i)); // Move to ViewModel
+            LiveData<Location> currLocLive = viewModel.getLiveLocation(friendList.get(i));
             Location currLoc = currLocLive.getValue();
 
             // Create circle in the given angle
@@ -196,11 +195,44 @@ public class CompassActivity extends AppCompatActivity {
 
     private void updateOrientation(Float orientation) {
         currOrientation = Math.toDegrees(orientation);
-        Log.i("CURR ORIENTATION", currOrientation + "");
+        Log.i("CURR ORIENTATION", "Degrees: " + currOrientation + " & Radians: " + orientation);
     }
 
     private void updateFriendLocations(Location location) {
         // Update circle in the given angle
         DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location));
     }
+    /*
+    These are for server testing only
+     */
+    private void onOrientationChanged(Float orientation) {
+        currOrientation = (float)Math.toDegrees(orientation);
+    }
+    public void reobserveOrientation() {
+        LiveData<Float> orientationData = OrientationService.singleton(this).getOrientation();
+        orientationData.observe(this, this::onOrientationChanged);
+    }
+
+    public float getCurrOrientation(){
+        return (float) currOrientation;
+    }
+
+    private void onLocationChanged(Pair<Double, Double> loc) {
+        latitude = loc.first.floatValue();
+        longitude = loc.second.floatValue();
+    }
+    public void reobserveLocation() {
+        LiveData<Pair<Double, Double>> locationData = LocationService.singleton(this).getLocation();
+        locationData.observe(this, this::onLocationChanged);
+    }
+
+    public float getLatitude(){
+        return (float) latitude;
+    }
+
+    public float getLongitude(){
+        return (float) longitude;
+    }
+
+
 }

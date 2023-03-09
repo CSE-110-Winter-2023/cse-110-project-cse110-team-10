@@ -41,8 +41,8 @@ public class CompassViewModel extends AndroidViewModel {
     }
 
     public LiveData<Location> getLiveLocation(String public_code){
-        //return locRepo.getSynced(public_code);
-        return locRepo.getRemote(public_code);
+        return locRepo.getSynced(public_code);
+        //return locRepo.getRemote(public_code);
     }
 
 }

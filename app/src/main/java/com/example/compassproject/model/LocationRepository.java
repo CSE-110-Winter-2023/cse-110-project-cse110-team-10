@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer;
 
 import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class LocationRepository {
@@ -38,15 +37,28 @@ public class LocationRepository {
 
         Observer<Location> updateFromRemote = theirLocation -> {
             var ourLocation = location.getValue();
+            if(theirLocation == null){
+                return;
+            }
             if (ourLocation == null || ourLocation.updated_at.compareTo(theirLocation.updated_at) < 0) {
                 upsertLocal(theirLocation);
             }
         };
 
+        Observer<Location> postValueToLiveData = ourLocation -> {
+            if(ourLocation != null) {
+                location.postValue(ourLocation);
+            }
+        };
+
+        // get value from server for the 1st time.
+        var updatedLoc = getRemote(public_code);
+        location.setValue(updatedLoc.getValue());
+
         // If we get a local update, pass it on.
-        //location.addSource(getLocal(public_code), location::postValue);
+        location.addSource(getLocal(public_code), postValueToLiveData);
         // If we get a remote update, update the local version (triggering the above observer)
-        location.addSource(getRemote(public_code), updateFromRemote);
+        location.addSource(updatedLoc, updateFromRemote);
 
         return location;
     }
@@ -91,14 +103,21 @@ public class LocationRepository {
         // making live data to postValue
         MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
         // Calling getLocationAsync() to get the 1st location data
+        // Get data from server
         Location currLoc = LocationAPI.provide().getLocationAsync(public_code);
         //Log.i("GET REMOTE", currLoc.toJSON());
+        // Save it in local database
+        //upsertLocal(currLoc);
         locationMutableLiveData.setValue(currLoc);
+
 
         // getting the most updated live data from server every 3s
         var executor = Executors.newSingleThreadScheduledExecutor();
         var future = executor.scheduleAtFixedRate(() -> {
-            locationMutableLiveData.postValue(LocationAPI.provide().getLocation(public_code));
+            Location updatedLoc = LocationAPI.provide().getLocation(public_code);
+
+            locationMutableLiveData.postValue(updatedLoc);
+            //upsertLocal(LocationAPI.provide().getLocation(public_code));
         }, 0, 3000, TimeUnit.MILLISECONDS);
 
         return locationMutableLiveData;
