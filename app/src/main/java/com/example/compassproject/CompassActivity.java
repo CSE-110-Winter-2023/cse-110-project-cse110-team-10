@@ -195,7 +195,7 @@ public class CompassActivity extends AppCompatActivity {
 
     private void updateOrientation(Float orientation) {
         currOrientation = Math.toDegrees(orientation);
-        Log.i("CURR ORIENTATION", "Degrees: " + currOrientation + " & Radians: " + orientation);
+        Log.i("CURR ORIENTATION", currOrientation + "");
     }
 
     private void updateFriendLocations(Location location) {
