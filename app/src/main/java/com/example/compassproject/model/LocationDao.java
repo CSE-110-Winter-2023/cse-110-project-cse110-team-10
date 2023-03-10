@@ -37,3 +37,4 @@ public abstract class LocationDao {
     @Delete
     public abstract int delete(Location location);
 }
+

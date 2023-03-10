@@ -44,5 +44,5 @@ public class CompassViewModel extends AndroidViewModel {
         return locRepo.getSynced(public_code);
         //return locRepo.getRemote(public_code);
     }
-
 }
+

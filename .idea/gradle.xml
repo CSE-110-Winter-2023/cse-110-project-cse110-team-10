@@ -8,10 +8,14 @@
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
 <<<<<<< HEAD
+<<<<<<< HEAD
         <option name="gradleJvm" value="Embedded JDK" />
 =======
         <option name="gradleJvm" value="Android Studio default JDK" />
 >>>>>>> 9c7a8d22a6fb7fa9b1c7b26a681ccfd472f339f7
+=======
+        <option name="gradleJvm" value="Embedded JDK" />
+>>>>>>> 49915aa6e68b77f5ade023af245de15198b05964
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />

@@ -41,5 +41,5 @@ public class LocationGet {
     public String toJSON() {
         return new Gson().toJson(this);
     }
-
 }
+

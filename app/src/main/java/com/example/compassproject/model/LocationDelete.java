@@ -19,3 +19,4 @@ public class LocationDelete {
         return new Gson().toJson(this);
     }
 }
+

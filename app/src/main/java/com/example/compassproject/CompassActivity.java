@@ -22,6 +22,7 @@ import java.util.List;
 
 public class CompassActivity extends AppCompatActivity {
     private HashMap<String, View> locMap;
+
     private double currOrientation;
     private double latitude;
     private double longitude;
@@ -170,17 +171,19 @@ public class CompassActivity extends AppCompatActivity {
             // Create circle in the given angle
             //TODO: Change last parameter to friend name intead of UID
             View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc), getDistance(currLoc), zoomRadius, friendList.get(i));
+
+
             locMap.put(currLoc.public_code, loc_view);
 
             // caching background thread
             locationArray.add(currLocLive);
 
             //Will be replaced with new code for handling CircleView vs Label
+
             if(loc_view instanceof CircleView) {
                 ((CircleView) loc_view).setIndex(i);
                 DisplayLabels.displayPopUp(CompassActivity.this, (CircleView) loc_view);
             }
-
             // Set observer on LiveData so UI only updates when there is a change
             currLocLive.observe(this, this::updateFriendLocations);
         }
