@@ -20,7 +20,7 @@ import org.robolectric.shadows.ShadowApplication;
 
 @RunWith(RobolectricTestRunner.class)
 public class CompassActivityTesterMain {
-/*
+
     @Before
     public void setup() {
         Application application = ApplicationProvider.getApplicationContext();
@@ -34,15 +34,15 @@ public class CompassActivityTesterMain {
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.onActivity(activity -> {
-            DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, 0,0);
+            DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, 0,0, 5.0, 10.0, "Julia");
             View loc = activity.findViewById(1);
             ConstraintLayout.LayoutParams loc_lp = (ConstraintLayout.LayoutParams) loc.getLayoutParams();
             //check if radius is correct
-            assertEquals(0, loc_lp.circleRadius);
+            assertEquals(80, loc_lp.circleRadius);
             //check if angle is correct
-            assertEquals(0, loc_lp.circleAngle, 0);
+            assertEquals(225, loc_lp.circleAngle, 0);
         });
     }
 
- */
+
 }

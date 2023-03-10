@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.AnyThread;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -60,7 +61,7 @@ public class LocationAPI {
 
         // We can use future.get(1, SECONDS) to wait for the result.
         try {
-            return future.get(1, TimeUnit.SECONDS);
+            return future.get();
         } catch (Exception e) {
             e.printStackTrace();
         }
