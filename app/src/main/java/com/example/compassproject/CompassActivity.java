@@ -2,8 +2,8 @@ package com.example.compassproject;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
+import androidx.core.util.Pair;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,6 +19,7 @@ import com.example.compassproject.model.Location;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class CompassActivity extends AppCompatActivity {
     private HashMap<String, View> locMap;
@@ -49,8 +50,9 @@ public class CompassActivity extends AppCompatActivity {
 
         // Create location and orientation services
         LocationService ls = LocationService.singleton(this);
-        OrientationService os = OrientationService.singleton(this);
+        this.reobserveLocation();
 
+        OrientationService os = OrientationService.singleton(this);
         // Create map and array
         locMap = new HashMap<>();
         locationArray = new ArrayList<>();
@@ -238,13 +240,16 @@ public class CompassActivity extends AppCompatActivity {
         return (float) currOrientation;
     }
 
+    public void reobserveLocation() {
+        var locationData = LocationService.singleton(this).getLocation();
+        locationData.observe(this, this::onLocationChanged);
+    }
+
     private void onLocationChanged(Pair<Double, Double> loc) {
+
         latitude = loc.first.floatValue();
         longitude = loc.second.floatValue();
-    }
-    public void reobserveLocation() {
-        LiveData<Pair<Double, Double>> locationData = LocationService.singleton(this).getLocation();
-        locationData.observe(this, this::onLocationChanged);
+        Log.i("Tag", "USER LOCATION " + latitude + " " + longitude);
     }
 
     public float getLatitude(){
