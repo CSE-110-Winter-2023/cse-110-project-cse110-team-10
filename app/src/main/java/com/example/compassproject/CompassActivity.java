@@ -2,6 +2,7 @@ package com.example.compassproject;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import androidx.core.util.Pair;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -21,11 +22,15 @@ import java.util.List;
 import java.util.Locale;
 
 public class CompassActivity extends AppCompatActivity {
-    private HashMap<String, CircleView> locMap;
+    private HashMap<String, View> locMap;
+
     private double currOrientation;
     private double latitude;
     private double longitude;
     private int radius;
+
+    //radius of compass in miles, default is 10 miles
+    private int zoomRadius = 10;
     private ImageView compass;
 
     CompassViewModel viewModel;
@@ -166,16 +171,21 @@ public class CompassActivity extends AppCompatActivity {
             Location currLoc = currLocLive.getValue();
 
             // Create circle in the given angle
-            CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc));
+            //TODO: Change last parameter to friend name intead of UID
+            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc), getDistance(currLoc), zoomRadius, friendList.get(i));
+
+
             locMap.put(currLoc.public_code, loc_view);
 
             // caching background thread
             locationArray.add(currLocLive);
 
             //Will be replaced with new code for handling CircleView vs Label
-            loc_view.setIndex(i);
-            DisplayLabels.displayPopUp(CompassActivity.this,loc_view);
 
+            if(loc_view instanceof CircleView) {
+                ((CircleView) loc_view).setIndex(i);
+                DisplayLabels.displayPopUp(CompassActivity.this, (CircleView) loc_view);
+            }
             // Set observer on LiveData so UI only updates when there is a change
             currLocLive.observe(this, this::updateFriendLocations);
         }
@@ -195,6 +205,16 @@ public class CompassActivity extends AppCompatActivity {
         return rotatedDegree;
     }
 
+    private double getDistance(Location location){
+        // Coordinates of current saved location
+        double locLat = location.latitude;
+        double locLong = location.longitude;
+
+        // Degree if phone facing north
+        double distance = DistanceCalculator.distanceBetweenCoordinates(latitude, longitude, locLat, locLong);
+        return distance;
+    }
+
     private void updateOrientation(Float orientation) {
         currOrientation = Math.toDegrees(orientation);
         Log.i("CURR ORIENTATION", currOrientation + "");
@@ -202,7 +222,8 @@ public class CompassActivity extends AppCompatActivity {
 
     private void updateFriendLocations(Location location) {
         // Update circle in the given angle
-        DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location));
+        //TODO: Use Friend Name
+        DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomRadius, "Julia");
     }
     /*
     These are for server testing only

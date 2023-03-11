@@ -48,33 +48,34 @@ public class US2TesterMain
             float degreeW = DegreeCalculator.degreeBetweenCoordinates(0.0, 0.0, 0, -10.0);
 
 
-            View locN = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, radius, degreeN);
+            View locN = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, radius, degreeN, 10.0, 12, "Julia");
             ConstraintLayout.LayoutParams loc_lpN = (ConstraintLayout.LayoutParams) locN.getLayoutParams();
             //check if radius is correct
-            assertEquals(1, loc_lpN.circleRadius);
+            assertEquals(0, loc_lpN.circleRadius);
             //check if angle is correct
             assertEquals(degreeN, loc_lpN.circleAngle, 0);
 
-            View locE = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, radius, degreeE);
+            View locE = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, radius, degreeE, 10.0, 12, "Julia");
             ConstraintLayout.LayoutParams loc_lpE = (ConstraintLayout.LayoutParams) locE.getLayoutParams();
             //check if radius is correct
-            assertEquals(1, loc_lpE.circleRadius);
+            assertEquals(0, loc_lpE.circleRadius);
             //check if angle is correct
             assertEquals(degreeE, loc_lpE.circleAngle, 0);
 
-            View locW = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, radius, degreeW);
+            View locW = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, radius, degreeW, 10.0, 12, "Julia");
             ConstraintLayout.LayoutParams loc_lpW = (ConstraintLayout.LayoutParams) locW.getLayoutParams();
             //check if radius is correct
-            assertEquals(1, loc_lpW.circleRadius);
+            assertEquals(0, loc_lpW.circleRadius);
             //check if angle is correct
             assertEquals(degreeW, loc_lpW.circleAngle, 0);
 
-            View locS = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, radius, degreeS);
+            View locS = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, radius, degreeS, 10.0, 12, "Julia");
             ConstraintLayout.LayoutParams loc_lpS = (ConstraintLayout.LayoutParams) locS.getLayoutParams();
             //check if radius is correct
-            assertEquals(1, loc_lpS.circleRadius);
+            assertEquals(0, loc_lpS.circleRadius);
             //check if angle is correct
             assertEquals(degreeS, loc_lpS.circleAngle, 0);
         });
     }
 }
+

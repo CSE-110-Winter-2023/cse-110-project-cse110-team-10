@@ -122,5 +122,5 @@ public class LocationAPI {
         var executor = Executors.newSingleThreadExecutor();
         var future = executor.submit(() -> deleteLocation(location));
     }
-
 }
+
