@@ -39,7 +39,6 @@ public class SetNameActivity extends AppCompatActivity {
     private boolean checkNonEmptyName(String name_input)
     {
         return !name_input.equals("");
-
     }
 
     private void storeName(String name)
