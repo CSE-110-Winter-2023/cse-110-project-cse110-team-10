@@ -23,7 +23,9 @@ public class UserInfo
     //TODO implement in US2
     public void setUID(String UID)
     {
-
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("UID", UID);
+        editor.apply();
     }
 
     //checks if user has inputted a name
@@ -42,7 +44,7 @@ public class UserInfo
     //TODO implement in US2
     public String getUID()
     {
-        return "";
+        return preferences.getString("UID", "");
     }
 
 
