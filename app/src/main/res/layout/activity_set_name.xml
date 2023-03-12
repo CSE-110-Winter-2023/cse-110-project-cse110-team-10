@@ -4,26 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddFriendsActivity">
-
-    <Button
-    android:id="@+id/friend_back_btn"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="256dp"
-    android:text="@string/Add_Friends_Back_button"
-    app:layout_constraintBottom_toBottomOf="parent"
-    android:onClick="onAddFriendsBackButtonClicked"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.315"
-    app:layout_constraintStart_toStartOf="parent" />
+    tools:context=".SetNameActivity">
 
     <TextView
-        android:id="@+id/friend_label"
+        android:id="@+id/name_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:text="@string/Add_Friends_Label"
+        android:layout_marginTop="72dp"
+        android:text="@string/enter_name"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
@@ -31,12 +19,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/friend_uid_input"
+        android:id="@+id/name_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="328dp"
+        android:layout_marginBottom="392dp"
         android:ems="10"
-        android:hint="@string/friends_uid_label"
+        android:hint="@string/enter_your_name"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,15 +32,14 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/friend_submit_btn"
+        android:id="@+id/name_submit_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="256dp"
+        android:layout_marginBottom="312dp"
+        android:onClick="onNameSubmitButtonClicked"
         android:text="@string/Add_Friends_submit_button"
-        android:onClick="onAddFriendsSubmitButtonClicked"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.684"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
