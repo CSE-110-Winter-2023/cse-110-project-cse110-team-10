@@ -34,16 +34,28 @@ public class MainActivity extends AppCompatActivity {
 
 
         //TODO: Implement check if user name has already been inputted
-        /*Intent intent = new Intent(this,CompassActivity.class);
-        startActivity(intent);*/
+
+        UserInfo u1 = new UserInfo(getSharedPreferences(getString(R.string.saveUserInfo), MODE_PRIVATE));
+        if(u1.hasName())
+        {
+            Intent intent = new Intent(this,CompassActivity.class);
+            startActivity(intent);
+        }
+        else
+        {
+            Intent intent = new Intent(this,SetNameActivity.class);
+            startActivity(intent);
+        }
+
+
 
 
     }
 
-    //temporary onClick until enter name activity is implemented
+  /*  //temporary onClick until enter name activity is implemented
     public void GoToCompassView(View view)
     {
         Intent intent = new Intent(this,CompassActivity.class);
         startActivity(intent);
-    }
+    }*/
 }
