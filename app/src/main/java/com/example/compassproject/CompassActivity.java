@@ -263,4 +263,9 @@ public class CompassActivity extends AppCompatActivity {
     public float getLongitude(){
         return (float) longitude;
     }
+
+    public void onAddFriendsButtonClicked(View view) {
+        Intent intent = new Intent(this, AddFriendsActivity.class);
+        startActivity(intent);
+    }
 }

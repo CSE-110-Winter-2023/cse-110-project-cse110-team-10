@@ -7,7 +7,10 @@ import androidx.core.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.room.Room;
 
+import com.example.compassproject.FriendEntryDao;
+import com.example.compassproject.FriendEntryDatabase;
 import com.example.compassproject.model.Location;
 import com.example.compassproject.model.LocationDatabase;
 import com.example.compassproject.model.LocationRepository;
@@ -18,6 +21,7 @@ import java.util.List;
 public class CompassViewModel extends AndroidViewModel {
     private LiveData<Location> location;
     private final LocationRepository locRepo;
+    private final FriendEntryDao friendEntryDao;
 
     public CompassViewModel(@NonNull Application application) {
         super(application);
@@ -25,7 +29,8 @@ public class CompassViewModel extends AndroidViewModel {
         var locDb = LocationDatabase.provide(context);
         var locDao = locDb.getDao();
         this.locRepo = new LocationRepository(locDao);
-        //TODO: Add friend's database
+        var friendDb = FriendEntryDatabase.getSingleton(context);
+        this.friendEntryDao = friendDb.friendEntryDao();
     }
     public void updateCoordinatesRemote(Pair<Double, Double> location){
         //TODO: Use real public_code, private_code, and label
@@ -33,10 +38,13 @@ public class CompassViewModel extends AndroidViewModel {
         locRepo.upsertRemote(loc1);
     }
     public List<String> getAllFriendUIDs(){
-        //TODO: GETTING OUR FRIEND's UID FROM DATABASE
+        var friendEntryList = friendEntryDao.getAll();
         var list = new ArrayList<String>();
-        list.add("van");
-        list.add("Kanishk");
+
+        for(int i = 0; i < friendEntryList.size(); i++){
+            list.add(friendEntryList.get(i).uid);
+        }
+
         return list;
     }
 

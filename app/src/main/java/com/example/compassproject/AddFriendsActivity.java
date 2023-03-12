@@ -49,7 +49,9 @@ public class AddFriendsActivity extends AppCompatActivity {
         if(isValidUID)
         {
             friendEntryDao.insert(friend);
-            finish();
+            //TODO: Change to finish() when CompassActivity is refactored to not only run properly onCreate()
+            Intent intent = new Intent(this, CompassActivity.class);
+            startActivity(intent);
         }
         else
         {
