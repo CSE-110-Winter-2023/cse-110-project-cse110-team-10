@@ -88,10 +88,10 @@ public class US3Tester {
             assertEquals(1, entries.size());
             assertEquals("RandomNameThatWillAlwaysAlwaysBeOnTheServer4000", entries.get(0).uid);
 
-            //check that activity is finishing
-            assertTrue(activity.isFinishing());
-
-
+            ShadowActivity shadowActivity = shadowOf(activity);
+            Intent startedIntent = shadowActivity.getNextStartedActivity();
+            ShadowIntent shadowIntent = shadowOf(startedIntent);
+            assertEquals(CompassActivity.class.getSimpleName(), shadowIntent.getIntentClass().getSimpleName());
         });
     }
 

@@ -37,7 +37,4 @@ public class LocationPut {
     public String toJSON() {
         return new Gson().toJson(this);
     }
-
-
-
 }

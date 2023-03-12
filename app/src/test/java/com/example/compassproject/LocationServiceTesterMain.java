@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import android.Manifest;
 import android.app.Application;
-import android.util.Pair;
+import androidx.core.util.Pair;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Lifecycle;

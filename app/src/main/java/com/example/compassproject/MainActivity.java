@@ -4,14 +4,15 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
+import androidx.core.util.Pair;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 public class MainActivity extends AppCompatActivity {
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,12 +33,9 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_NETWORK_STATE}, 200);
         }
 
-
         //TODO: Implement check if user name has already been inputted
-        /*Intent intent = new Intent(this,CompassActivity.class);
-        startActivity(intent);*/
-
-
+        Intent intent = new Intent(this,CompassActivity.class);
+        startActivity(intent);
     }
 
     //temporary onClick until enter name activity is implemented
