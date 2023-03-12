@@ -45,7 +45,14 @@ public class UserInfoTester {
     @Test
     public void testSaveUIDCorrectly()
     {
+        scenario.onActivity(activity -> {
+            SharedPreferences preferences = activity.getSharedPreferences("Test", Context.MODE_PRIVATE);
+            UserInfo u1 = new UserInfo(preferences);
 
+            u1.setUID("JuliaUID");
+
+            assertEquals("JuliaUID", u1.getUID());
+        });
     }
 
 
