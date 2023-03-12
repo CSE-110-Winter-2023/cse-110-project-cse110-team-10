@@ -42,4 +42,3 @@ public class LocationGet {
         return new Gson().toJson(this);
     }
 }
-

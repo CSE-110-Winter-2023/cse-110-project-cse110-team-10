@@ -13,8 +13,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 public class LocationAPI {
-
-
     private volatile static LocationAPI instance = null;
 
     private OkHttpClient client;
@@ -123,4 +121,3 @@ public class LocationAPI {
         var future = executor.submit(() -> deleteLocation(location));
     }
 }
-

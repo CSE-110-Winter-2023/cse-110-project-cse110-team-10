@@ -1,5 +1,13 @@
 package com.example.compassproject;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.LiveData;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,9 +16,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.compassproject.ViewModel.CompassViewModel;
@@ -258,6 +263,4 @@ public class CompassActivity extends AppCompatActivity {
     public float getLongitude(){
         return (float) longitude;
     }
-
-
 }

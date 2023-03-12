@@ -103,6 +103,7 @@ public class LocationRepository {
         // making live data to postValue
         MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
         // Calling getLocationAsync() to get the 1st location data
+
         // Get data from server
         Location currLoc = LocationAPI.provide().getLocationAsync(public_code);
         //Log.i("GET REMOTE", currLoc.toJSON());
@@ -110,14 +111,11 @@ public class LocationRepository {
         //upsertLocal(currLoc);
         locationMutableLiveData.setValue(currLoc);
 
-
         // getting the most updated live data from server every 3s
         var executor = Executors.newSingleThreadScheduledExecutor();
         var future = executor.scheduleAtFixedRate(() -> {
             Location updatedLoc = LocationAPI.provide().getLocation(public_code);
-
             locationMutableLiveData.postValue(updatedLoc);
-            //upsertLocal(LocationAPI.provide().getLocation(public_code));
         }, 0, 3000, TimeUnit.MILLISECONDS);
 
         return locationMutableLiveData;

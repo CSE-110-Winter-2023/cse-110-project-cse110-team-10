@@ -38,4 +38,3 @@ public class LocationPut {
         return new Gson().toJson(this);
     }
 }
-
