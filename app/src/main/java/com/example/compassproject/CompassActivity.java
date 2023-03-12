@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -110,7 +111,9 @@ public class CompassActivity extends AppCompatActivity {
     }
 
     private void updateCoordinatesRemote(Pair<Double, Double> location){
-        viewModel.updateCoordinatesRemote(location);
+
+        UserInfo u1 = new UserInfo(getSharedPreferences(getString(R.string.saveUserInfo), MODE_PRIVATE));
+        viewModel.updateCoordinatesRemote(location, u1);
     }
     private CompassViewModel setupViewModel() {
         return new ViewModelProvider(this).get(CompassViewModel.class);
