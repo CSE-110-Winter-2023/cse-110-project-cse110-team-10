@@ -13,8 +13,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 public class LocationAPI {
-
-
     private volatile static LocationAPI instance = null;
 
     private OkHttpClient client;
@@ -55,13 +53,13 @@ public class LocationAPI {
 
     // getLocation Asynchronously
     @AnyThread
-    public Future<Location> getLocationAsync(String public_code) {
+    public Location getLocationAsync(String public_code) {
         var executor = Executors.newSingleThreadExecutor();
         var future = executor.submit(() -> getLocation(public_code));
 
         // We can use future.get(1, SECONDS) to wait for the result.
         try {
-            return future;   // .get(1, TimeUnit.SECONDS); Future return type
+            return future.get();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -122,5 +120,4 @@ public class LocationAPI {
         var executor = Executors.newSingleThreadExecutor();
         var future = executor.submit(() -> deleteLocation(location));
     }
-
 }

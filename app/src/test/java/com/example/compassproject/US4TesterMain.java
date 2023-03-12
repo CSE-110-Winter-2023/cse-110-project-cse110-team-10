@@ -1,14 +1,12 @@
 package com.example.compassproject;
-
 import static org.junit.Assert.assertEquals;
 
 import android.Manifest;
 import android.app.Application;
 import android.view.View;
+import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.MutableLiveData;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -18,8 +16,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowApplication;
-
-
 
 @RunWith(RobolectricTestRunner.class)
 public class US4TesterMain {
@@ -31,65 +27,47 @@ public class US4TesterMain {
         app.grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
+    // Tests if locations change from Circle to Text when both zoom in and zoom out
     @Test
-    public void testRotate180(){
-        float degreeN = DegreeCalculator.degreeBetweenCoordinates(0.0, 0.0, 10.0, 0.0);
-        float degreeE = DegreeCalculator.degreeBetweenCoordinates(0.0, 0.0, 0, 10.0);
-        float degreeS = DegreeCalculator.degreeBetweenCoordinates(0.0, 0.0, -10.0, 0);
-        float degreeW = DegreeCalculator.degreeBetweenCoordinates(0.0, 0.0, 0.0, -10.0);
+    public void testFriendsAreInDifferentLocationsAndDifferentZones() {
         ActivityScenario<CompassActivity> scenario = ActivityScenario.launch(CompassActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.onActivity(activity -> {
-            OrientationService orientationService = OrientationService.singleton(activity);
-            MutableLiveData<Float> mockOrientation = new MutableLiveData<Float>();
-            orientationService.setMockOrientationSource(mockOrientation);
-            activity.reobserveOrientation();
-            View locN = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, 1, degreeN);
-            View locE = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, 1, degreeE);
-            //change phone's orientation
-            mockOrientation.setValue((float) Math.PI);
-            ConstraintLayout.LayoutParams loc_lpN = (ConstraintLayout.LayoutParams) locN.getLayoutParams();
-            ConstraintLayout.LayoutParams loc_lpE = (ConstraintLayout.LayoutParams) locE.getLayoutParams();
-            assertEquals(1, loc_lpN.circleRadius);
-            assertEquals(degreeS,DegreeCalculator.rotatingToPhoneOrientation(loc_lpN.circleAngle, activity.getCurrOrientation()) , 0);
-            assertEquals(1, loc_lpE.circleRadius);
-            assertEquals(degreeW,DegreeCalculator.rotatingToPhoneOrientation(loc_lpE.circleAngle, activity.getCurrOrientation()) , 0);
+            // Zoomed in all the way so only friends within 1 mile will show name
+            var radius = 400;
+            var maxDistance = 1;
+
+            // View 1 will be 0.5 miles to North
+            var orientation1 = 0;
+            var distance1 = 0.5;
+
+            // View 2 will be 5 miles to East
+            var orientation2 = 90;
+            var distance2 = 5;
+
+            // Set UI as originally fully zoomed in
+
+            View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, maxDistance, "test");
+            View view2 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation2, distance2, maxDistance, "test");
+            assertEquals(true, view1 instanceof TextView); // View 1 is in range
+            assertEquals(true, view2 instanceof CircleView); // View 2 is out of range
+
+            // Tests zoom out
+
+            maxDistance = 10; // Zoom out to include all locations within 10 miles
+            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, maxDistance, "test");
+            view2 = DisplayHelper.updateLocation(activity, view2, radius, orientation2, distance2, maxDistance, "test");
+            assertEquals(true, view1 instanceof TextView); // View 1 is in range
+            assertEquals(true, view2 instanceof TextView); // View 2 is in range
+
+            // Tests zoom in
+
+            maxDistance = 1; // Zoom out to include all locations within 1 mile
+            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, maxDistance, "test");
+            view2 = DisplayHelper.updateLocation(activity, view2, radius, orientation2, distance2, maxDistance, "test");
+            assertEquals(true, view1 instanceof TextView); // View 1 is in range
+            assertEquals(true, view2 instanceof CircleView); // View 2 is in range
         });
     }
-
-    @Test
-    public void testRotate90(){
-        float degreeN = DegreeCalculator.degreeBetweenCoordinates(0.0, 0.0, 10.0, 0.0);
-        float degreeE = DegreeCalculator.degreeBetweenCoordinates(0.0, 0.0, 0, 10.0);
-        float degreeS = DegreeCalculator.degreeBetweenCoordinates(0.0, 0.0, -10.0, 0);
-        float degreeW = DegreeCalculator.degreeBetweenCoordinates(0.0, 0.0, 0.0, -10.0);
-
-        ActivityScenario<CompassActivity> scenario = ActivityScenario.launch(CompassActivity.class);
-        scenario.moveToState(Lifecycle.State.CREATED);
-        scenario.moveToState(Lifecycle.State.STARTED);
-        scenario.onActivity(activity -> {
-            OrientationService orientationService = OrientationService.singleton(activity);
-            MutableLiveData<Float> mockOrientation = new MutableLiveData<Float>();
-            orientationService.setMockOrientationSource(mockOrientation);
-            activity.reobserveOrientation();
-            View locN = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, 1, degreeN);
-            View locE = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, 1, degreeE);
-            View locS = DisplayHelper.displaySingleLocation((CompassActivity)activity, 1, 1, degreeS);
-
-            //change phone's orientation
-            mockOrientation.setValue((float) Math.PI/2);
-            ConstraintLayout.LayoutParams loc_lpN = (ConstraintLayout.LayoutParams) locN.getLayoutParams();
-            ConstraintLayout.LayoutParams loc_lpE = (ConstraintLayout.LayoutParams) locE.getLayoutParams();
-            ConstraintLayout.LayoutParams loc_lpS = (ConstraintLayout.LayoutParams) locS.getLayoutParams();
-
-            assertEquals(1, loc_lpN.circleRadius);
-            assertEquals(degreeW, DegreeCalculator.rotatingToPhoneOrientation(loc_lpN.circleAngle, activity.getCurrOrientation()), 0);
-            assertEquals(1, loc_lpE.circleRadius);
-            assertEquals(degreeN, DegreeCalculator.rotatingToPhoneOrientation(loc_lpE.circleAngle, activity.getCurrOrientation()), 0);
-            assertEquals(1, loc_lpS.circleRadius);
-            assertEquals(degreeE,DegreeCalculator.rotatingToPhoneOrientation(loc_lpS.circleAngle, activity.getCurrOrientation()) , 0);
-        });
-    }
-
 }

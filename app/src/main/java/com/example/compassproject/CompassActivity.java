@@ -10,164 +10,77 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-
-import android.util.Pair;
 import android.view.View;
+import androidx.core.util.Pair;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.compassproject.ViewModel.CompassViewModel;
+import com.example.compassproject.model.Location;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 public class CompassActivity extends AppCompatActivity {
-    static int radius;
-    SavedLocations savedLocations;
+    private HashMap<String, View> locMap;
 
-    private ExecutorService backgroundThreadExecutor = Executors.newSingleThreadExecutor();
-    private Future<Void> future;
+    private double currOrientation;
+    private double latitude;
+    private double longitude;
+    private int radius;
 
-    ArrayList <CircleView> locArray = new ArrayList<>();
-    private float currOrientation;
-    private float latitude;
-    private float longitude;
-    /*
-     * TODO: Update locations and angles for compass_N, compass_E, compass_S, compass_W
-     */
+    //radius of compass in miles, default is 10 miles
+    private int zoomRadius = 10;
+    private ImageView compass;
+
+    CompassViewModel viewModel;
+
+    ArrayList<LiveData<Location>> locationArray;
+
+    ConstraintLayout.LayoutParams north_lp, south_lp, east_lp, west_lp;
+    TextView north, south, east, west;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compass);
 
-        // Get coordinates and labels entered by user
-        savedLocations = new SavedLocations(getSharedPreferences("LocationData", MODE_PRIVATE));
+        // Create View Model
+        viewModel = setupViewModel();
 
         // Create location and orientation services
         LocationService ls = LocationService.singleton(this);
+        this.reobserveLocation();
+
         OrientationService os = OrientationService.singleton(this);
-
-        // Continuously update location data to local fields
-        ls.getLocation().observe(this, location -> {
-            latitude = location.first.floatValue();
-            longitude = location.second.floatValue();
-        });
-
-        // Continuously update orientation data to local fields
-        os.getOrientation().observe(this, orientation -> {
-            currOrientation = (float) Math.toDegrees(orientation);
-        });
+        // Create map and array
+        locMap = new HashMap<>();
+        locationArray = new ArrayList<>();
 
         // Make sure compass has been set up on UI
-        final ImageView compass = (ImageView) findViewById(R.id.compass_face);
+        compass = (ImageView) findViewById(R.id.compass_face);
         ViewTreeObserver observer = compass.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                // Access UI elements for cardinal directions
-                TextView north = (TextView) findViewById(R.id.compass_N);
-                TextView east = (TextView) findViewById(R.id.compass_E);
-                TextView south = (TextView) findViewById(R.id.compass_S);
-                TextView west = (TextView) findViewById(R.id.compass_W);
+                setupUI();
 
-                // Calculate radius
-                int rad = compass.getHeight() / 2;
-                radius = rad;
+                // When our location changes, update to server and update friend's relative angles
+                ls.getLocation().observe(CompassActivity.this, location -> {
+                    updateCoordinates(location);
+                    updateAllFriendLocations();
+                });
 
-                // Placing cardinal direction labels in correct initial location
-                ConstraintLayout.LayoutParams north_lp = (ConstraintLayout.LayoutParams) north.getLayoutParams();
-                north_lp.circleRadius = rad;
-                north.setLayoutParams(north_lp);
-
-                ConstraintLayout.LayoutParams east_lp = (ConstraintLayout.LayoutParams) east.getLayoutParams();
-                east_lp.circleRadius = rad;
-                east.setLayoutParams(east_lp);
-
-                ConstraintLayout.LayoutParams south_lp = (ConstraintLayout.LayoutParams) south.getLayoutParams();
-                south_lp.circleRadius = rad;
-                south.setLayoutParams(south_lp);
-
-                ConstraintLayout.LayoutParams west_lp = (ConstraintLayout.LayoutParams) west.getLayoutParams();
-                west_lp.circleRadius = rad;
-                west.setLayoutParams(west_lp);
-
-                // showing red dots which is saved user locations
-                for(int i = 0; i < savedLocations.getNumLocations(); i++){
-                    // Coordinates of current saved location
-                    float locLat = savedLocations.getLatitude(i);
-                    float locLong = savedLocations.getLongitude(i);
-
-                    // Degree if phone facing north
-                    float initDegree = DegreeCalculator.degreeBetweenCoordinates(latitude, longitude, locLat, locLong);
-
-                    // Degree for current phone direction
-                    float degree = DegreeCalculator.rotatingToPhoneOrientation(initDegree, currOrientation);
-
-                    // Create circle in the given angle
-                    CircleView loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, rad-64, degree);
-                    locArray.add(loc_view);
-                    
-                    loc_view.setIndex(i);
-                    DisplayLabels.displayPopUp(CompassActivity.this,loc_view);
-                }
-
-                //TODO: loop through all locations w correct degrees
-                /* degrees ==> SavedLocation.getDegrees(loc_id)
-                 */
-
-                // Run background thread to update UI with location and orientation every 250 ms
-                CompassActivity.this.future = backgroundThreadExecutor.submit(() -> {
-                    do{
-                        // Make final copies of most updated location and orientation data
-                        final float latitudeCopy = latitude;
-                        final float longitudeCopy = longitude;
-                        final float orientationCopy = currOrientation;
-
-                        // Make final copy of number of locations added
-                        int numLocations = savedLocations.getNumLocations();
-                        final int numLocationsCopy = numLocations;
-
-                        runOnUiThread(() -> {
-                            // Calculate new angle of cardinal direction labels
-                            north_lp.circleAngle = -orientationCopy;
-                            east_lp.circleAngle = 90 - orientationCopy;
-                            south_lp.circleAngle = 180 - orientationCopy;
-                            west_lp.circleAngle = 270 - orientationCopy;
-
-                            // Place cardinal direction labels in correct location
-                            north.setLayoutParams(north_lp);
-                            east.setLayoutParams(east_lp);
-                            south.setLayoutParams(south_lp);
-                            west.setLayoutParams(west_lp);
-
-                            // Create circles representing relative locations
-                            for(int i = 0; i < numLocationsCopy; i++){
-                                // Coordinates of current saved location
-                                float locLat = savedLocations.getLatitude(i);
-                                float locLong = savedLocations.getLongitude(i);
-
-                                // Degree if phone facing north
-                                float initDegree = DegreeCalculator.degreeBetweenCoordinates(latitudeCopy, longitudeCopy, locLat, locLong);
-
-                                // Degree for current phone direction
-                                float degree = DegreeCalculator.rotatingToPhoneOrientation(initDegree, orientationCopy);
-
-                                // Create circle in the given angle
-                                DisplayHelper.updateLocation(CompassActivity.this, locArray.get(i), rad-64, degree);
-                                // TODO: Update instead of create new circle
-                            }
-                        });
-
-//                        Log.d("Location", "(" + latitudeCopy + ", " + longitudeCopy + ")");
-//                        Log.d("Orientation", "" + orientationCopy);
-
-                        Thread.sleep(100);
-                    } while(true);
+                // Continuously update orientation data to local fields
+                os.getOrientation().observe(CompassActivity.this, orientation -> {
+                    updateOrientation(orientation);
+                    updateCardinalAxisLabels();
+                    updateAllFriendLocations();
                 });
 
                 compass.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -175,6 +88,150 @@ public class CompassActivity extends AppCompatActivity {
         });
     }
 
+    public void updateAllFriendLocations(){
+        // showing red dots which is saved user locations
+        for(int i = 0; i < locationArray.size(); i++){
+            LiveData<Location> currLocLive = locationArray.get(i);
+            Location currLoc = currLocLive.getValue();
+
+            updateFriendLocations(currLoc);
+        }
+    }
+    // Update coordinates both locally and remotely
+    private void updateCoordinates(Pair<Double, Double> location) {
+        updateCoordinatesLocal(location);
+        updateCoordinatesRemote(location);
+    }
+
+    private void updateCoordinatesLocal(Pair<Double, Double> location){
+        latitude = location.first;
+        longitude = location.second;
+        Log.i("CURR LOCATION", "(" + latitude + "," + longitude + ")");
+    }
+
+    private void updateCoordinatesRemote(Pair<Double, Double> location){
+        viewModel.updateCoordinatesRemote(location);
+    }
+    private CompassViewModel setupViewModel() {
+        return new ViewModelProvider(this).get(CompassViewModel.class);
+    }
+
+    private void setupUI() {
+        setupCardinalAxisLabels();
+        setupFriendLocations();
+    }
+
+    private void updateCardinalAxisLabels(){
+        north_lp.circleAngle = (float) -currOrientation;
+        east_lp.circleAngle = (float) (90 - currOrientation);
+        south_lp.circleAngle = (float) (180 - currOrientation);
+        west_lp.circleAngle = (float) (270 - currOrientation);
+
+        // Place cardinal direction labels in correct location
+        north.setLayoutParams(north_lp);
+        east.setLayoutParams(east_lp);
+        south.setLayoutParams(south_lp);
+        west.setLayoutParams(west_lp);
+    }
+
+    private void setupCardinalAxisLabels(){
+        // Access UI elements for cardinal directions
+        north = (TextView) findViewById(R.id.compass_N);
+        east = (TextView) findViewById(R.id.compass_E);
+        south = (TextView) findViewById(R.id.compass_S);
+        west = (TextView) findViewById(R.id.compass_W);
+
+        setRadius();
+
+        // Placing cardinal direction labels in correct initial location
+        north_lp = (ConstraintLayout.LayoutParams) north.getLayoutParams();
+        north_lp.circleRadius = radius;
+        north.setLayoutParams(north_lp);
+
+        east_lp = (ConstraintLayout.LayoutParams) east.getLayoutParams();
+        east_lp.circleRadius = radius;
+        east.setLayoutParams(east_lp);
+
+        south_lp = (ConstraintLayout.LayoutParams) south.getLayoutParams();
+        south_lp.circleRadius = radius;
+        south.setLayoutParams(south_lp);
+
+        west_lp = (ConstraintLayout.LayoutParams) west.getLayoutParams();
+        west_lp.circleRadius = radius;
+        west.setLayoutParams(west_lp);
+    }
+
+    // Calculate radius
+    private void setRadius(){
+        radius = compass.getHeight() / 2;
+    }
+
+    private void setupFriendLocations(){
+        List<String> friendList = viewModel.getAllFriendUIDs(); // Move to ViewModel
+        int numFriends = friendList.size();
+
+        // showing red dots which is saved user locations
+        for(int i = 0; i < numFriends; i++){
+            LiveData<Location> currLocLive = viewModel.getLiveLocation(friendList.get(i));
+            Location currLoc = currLocLive.getValue();
+
+            // Create circle in the given angle
+            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc), getDistance(currLoc), zoomRadius, currLoc.label);
+
+
+            locMap.put(currLoc.public_code, loc_view);
+
+            // caching background thread
+            locationArray.add(currLocLive);
+
+            //Will be replaced with new code for handling CircleView vs Label
+
+            if(loc_view instanceof CircleView) {
+                ((CircleView) loc_view).setIndex(i);
+                DisplayLabels.displayPopUp(CompassActivity.this, (CircleView) loc_view);
+            }
+            // Set observer on LiveData so UI only updates when there is a change
+            currLocLive.observe(this, this::updateFriendLocations);
+        }
+    }
+
+    private float getDegree(Location location){
+        // Coordinates of current saved location
+        double locLat = location.latitude;
+        double locLong = location.longitude;
+
+        // Degree if phone facing north
+        float initDegree = DegreeCalculator.degreeBetweenCoordinates(latitude, longitude, locLat, locLong);
+
+        // Degree for current phone direction
+        float rotatedDegree = DegreeCalculator.rotatingToPhoneOrientation(initDegree, (float) currOrientation);
+        Log.i("DEGREE", location.public_code + ": " + rotatedDegree);
+        return rotatedDegree;
+    }
+
+    private double getDistance(Location location){
+        // Coordinates of current saved location
+        double locLat = location.latitude;
+        double locLong = location.longitude;
+
+        // Degree if phone facing north
+        double distance = DistanceCalculator.distanceBetweenCoordinates(latitude, longitude, locLat, locLong);
+        return distance;
+    }
+
+    private void updateOrientation(Float orientation) {
+        currOrientation = Math.toDegrees(orientation);
+        Log.i("CURR ORIENTATION", currOrientation + "");
+    }
+
+    private void updateFriendLocations(Location location) {
+        // Update circle in the given angle
+        View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomRadius, location.label);
+        locMap.put(location.public_code, newView);
+    }
+    /*
+    These are for server testing only
+     */
     private void onOrientationChanged(Float orientation) {
         currOrientation = (float)Math.toDegrees(orientation);
     }
@@ -184,29 +241,31 @@ public class CompassActivity extends AppCompatActivity {
     }
 
     public float getCurrOrientation(){
-        return currOrientation;
+        return (float) currOrientation;
     }
 
-    private void onLocationChanged(Pair<Double, Double> loc) {
-        latitude = loc.first.floatValue();
-        longitude = loc.second.floatValue();
-    }
     public void reobserveLocation() {
-        LiveData<Pair<Double, Double>> locationData = LocationService.singleton(this).getLocation();
+        var locationData = LocationService.singleton(this).getLocation();
         locationData.observe(this, this::onLocationChanged);
     }
 
+    private void onLocationChanged(Pair<Double, Double> loc) {
+
+        latitude = loc.first.floatValue();
+        longitude = loc.second.floatValue();
+        Log.i("Tag", "USER LOCATION " + latitude + " " + longitude);
+    }
+
     public float getLatitude(){
-        return latitude;
+        return (float) latitude;
     }
 
     public float getLongitude(){
-        return longitude;
+        return (float) longitude;
     }
 
     public void onAddFriendsButtonClicked(View view) {
         Intent intent = new Intent(this, AddFriendsActivity.class);
         startActivity(intent);
     }
-
 }
