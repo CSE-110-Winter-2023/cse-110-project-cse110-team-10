@@ -171,8 +171,7 @@ public class CompassActivity extends AppCompatActivity {
             Location currLoc = currLocLive.getValue();
 
             // Create circle in the given angle
-            //TODO: Change last parameter to friend name intead of UID
-            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc), getDistance(currLoc), zoomRadius, friendList.get(i));
+            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc), getDistance(currLoc), zoomRadius, currLoc.label);
 
 
             locMap.put(currLoc.public_code, loc_view);
@@ -222,8 +221,8 @@ public class CompassActivity extends AppCompatActivity {
 
     private void updateFriendLocations(Location location) {
         // Update circle in the given angle
-        //TODO: Use Friend Name
-        DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomRadius, "Julia");
+        View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomRadius, location.label);
+        locMap.put(location.public_code, newView);
     }
     /*
     These are for server testing only

@@ -48,7 +48,7 @@ public class DisplayHelper {
             return friendName;
         }
     }
-    public static void updateLocation(CompassActivity activity, View loc_view, int radius, float degrees, double distance, double maxDistance, String friendName){
+    public static View updateLocation(CompassActivity activity, View loc_view, int radius, float degrees, double distance, double maxDistance, String friendName){
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
         double distancePercentOfMax = distance / maxDistance;
@@ -57,7 +57,7 @@ public class DisplayHelper {
             //previously inside compass, now on edge. text --> circle
             if(loc_view instanceof TextView) {
                 cl.removeView(loc_view);
-                displaySingleLocation(activity, 1, radius, degrees, distance, maxDistance, friendName);
+                return displaySingleLocation(activity, 1, radius, degrees, distance, maxDistance, friendName);
             }
 
             //stays in circle as a TextView
@@ -65,13 +65,14 @@ public class DisplayHelper {
                 cs.clone(cl);
                 cs.constrainCircle(loc_view.getId(), R.id.compass_face, radius, degrees);
                 cs.applyTo(cl);
+                return loc_view;
             }
         }
 
         else{
             if(loc_view instanceof CircleView) {
                 cl.removeView(loc_view);
-                displaySingleLocation(activity, 1, radius, degrees, distance, maxDistance, friendName);
+                return displaySingleLocation(activity, 1, radius, degrees, distance, maxDistance, friendName);
             }
 
             //stays outside as a CircleView
@@ -79,9 +80,9 @@ public class DisplayHelper {
                 cs.clone(cl);
                 cs.constrainCircle(loc_view.getId(), R.id.compass_face, radius, degrees);
                 cs.applyTo(cl);
+                return loc_view;
             }
 
         }
-        return;
     }
 }
