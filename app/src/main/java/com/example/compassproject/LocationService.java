@@ -122,7 +122,7 @@ public class LocationService implements LocationListener {
     private void satelliteStatusChanged() {
 
         if (mLastLocation != null)
-            isGPSFix.postValue((SystemClock.elapsedRealtime() - mLastLocationMillis) < (GPS_UPDATE_INTERVAL * 2));
+            isGPSFix.postValue((SystemClock.elapsedRealtime() - mLastLocationMillis) < (60000));
     }
 
     private void unregisterLocationListener() {
@@ -143,5 +143,8 @@ public class LocationService implements LocationListener {
     public void setMockGPSFixSource(MutableLiveData<Boolean> mockGPSFixSource) {
         unregisterLocationListener();
         this.isGPSFix = mockGPSFixSource;
+    }
+    public long getElapsedTime(){
+        return SystemClock.elapsedRealtime() - mLastLocationMillis;
     }
 }
