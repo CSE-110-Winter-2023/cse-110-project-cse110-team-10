@@ -108,4 +108,28 @@
         app:srcCompat="@drawable/compass_face" />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
+
+  <Button
+      android:id="@+id/zoom_in_btn"
+      android:layout_width="50dp"
+      android:layout_height="50dp"
+      android:layout_marginStart="58dp"
+      android:layout_marginEnd="37dp"
+      android:layout_marginBottom="10dp"
+      android:text="+"
+      app:layout_constraintBottom_toTopOf="@+id/zoom_out_btn"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toEndOf="@+id/add_friend_btn" />
+
+  <Button
+      android:id="@+id/zoom_out_btn"
+      android:layout_width="50dp"
+      android:layout_height="50dp"
+      android:layout_marginStart="58dp"
+      android:layout_marginEnd="37dp"
+      android:layout_marginBottom="50dp"
+      android:text="-"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toEndOf="@+id/add_friend_btn" />
 </androidx.constraintlayout.widget.ConstraintLayout>
