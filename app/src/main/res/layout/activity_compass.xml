@@ -31,64 +31,69 @@
 
     <TextView
         android:id="@+id/compass_N"
-        android:layout_width="32dp"
+        android:layout_width="0dp"
         android:layout_height="32dp"
         android:text="@string/n"
         android:textAlignment="center"
         android:textSize="28sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/compass_E"
         app:layout_constraintCircle="@+id/compass_face"
         app:layout_constraintCircleAngle="0"
         app:layout_constraintCircleRadius="100dp"
+        app:layout_constraintEnd_toEndOf="@+id/compass_E"
+        app:layout_constraintStart_toStartOf="@+id/compass_E"
         tools:ignore="MissingConstraints"
-        tools:layout_constraintCircleAngle="90"
-        tools:layout_editor_absoluteX="246dp"
-        tools:layout_editor_absoluteY="81dp" />
+        tools:layout_constraintCircleAngle="90" />
 
 
     <TextView
         android:id="@+id/compass_E"
-        android:layout_width="32sp"
+        android:layout_width="0dp"
         android:layout_height="32sp"
         android:text="@string/e"
         android:textAlignment="center"
         android:textSize="28sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintCircle="@+id/compass_face"
         app:layout_constraintCircleAngle="90"
         app:layout_constraintCircleRadius="100dp"
+        app:layout_constraintEnd_toEndOf="@+id/compass_W"
+        app:layout_constraintStart_toStartOf="@+id/compass_W"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
-        tools:layout_constraintCircleAngle="90"
-        tools:layout_editor_absoluteX="246dp"
-        tools:layout_editor_absoluteY="81dp" />
+        tools:layout_constraintCircleAngle="90" />
 
     <TextView
         android:id="@+id/compass_W"
-        android:layout_width="32sp"
+        android:layout_width="0dp"
         android:layout_height="32dp"
         android:text="@string/w"
         android:textAlignment="center"
         android:textSize="28sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/compass_N"
         app:layout_constraintCircle="@+id/compass_face"
         app:layout_constraintCircleAngle="270"
         app:layout_constraintCircleRadius="100dp"
+        app:layout_constraintEnd_toEndOf="@+id/compass_S"
+        app:layout_constraintStart_toStartOf="@+id/compass_S"
         tools:ignore="MissingConstraints"
-        tools:layout_constraintCircleAngle="90"
-        tools:layout_editor_absoluteX="246dp"
-        tools:layout_editor_absoluteY="81dp" />
+        tools:layout_constraintCircleAngle="90" />
 
     <TextView
         android:id="@+id/compass_S"
-        android:layout_width="32sp"
+        android:layout_width="0dp"
         android:layout_height="32sp"
+        android:layout_marginEnd="89dp"
         android:text="@string/s"
         android:textAlignment="center"
         android:textSize="28sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/compass_N"
         app:layout_constraintCircle="@+id/compass_face"
         app:layout_constraintCircleAngle="180"
         app:layout_constraintCircleRadius="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="MissingConstraints"
-        tools:layout_constraintCircleAngle="90"
-        tools:layout_editor_absoluteX="246dp"
-        tools:layout_editor_absoluteY="81dp" />
+        tools:layout_constraintCircleAngle="90" />
 
     <ImageView
         android:id="@+id/compass_face"
@@ -106,6 +111,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/compass_face" />
+
+    <com.example.compassproject.CircleView
+        android:id="@+id/statusIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/compass_face"
+        app:layout_constraintEnd_toEndOf="@+id/compass_face" />
+
+    <TextView
+        android:id="@+id/timeIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:text="0m"
+        app:layout_constraintEnd_toStartOf="@+id/statusIndicator"
+        app:layout_constraintTop_toTopOf="@+id/compass_face"
+        app:layout_constraintVertical_bias="0.0" />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
