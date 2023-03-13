@@ -34,7 +34,7 @@ public class LocationServiceTesterMain {
     }
 
     @Test
-    public void test_orientation_service() {
+    public void test_location_service() {
         double testLat = 32.0F;
         double testLong = 117.0F;
 
@@ -51,6 +51,24 @@ public class LocationServiceTesterMain {
             assertEquals(testLat, activity.getLatitude(), 0);
             assertEquals(testLong, activity.getLongitude(), 0.1);
 
+        });
+    }
+
+    @Test
+    public void test_GPS_fix() {
+        boolean testFixStatus = true;
+
+        var scenario = ActivityScenario.launch(CompassActivity.class);
+        scenario.moveToState(Lifecycle.State.STARTED);
+        scenario.onActivity(activity -> {
+            var locationService = LocationService.singleton(activity);
+
+            var mockGPSFix= new MutableLiveData<Boolean>();
+            locationService.setMockGPSFixSource(mockGPSFix);
+            activity.reobserveLocation();
+
+            mockGPSFix.setValue(testFixStatus);
+            assertEquals(testFixStatus, mockGPSFix.getValue());
 
         });
     }

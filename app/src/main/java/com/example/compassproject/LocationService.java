@@ -6,9 +6,11 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.GnssStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.SystemClock;
 
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions;
 import androidx.annotation.NonNull;
@@ -22,6 +24,12 @@ import java.util.Arrays;
 
 public class LocationService implements LocationListener {
 
+    private static final long GPS_UPDATE_INTERVAL = 1000;
+    GnssStatus.Callback mGnssStatusCallback;
+
+    private MutableLiveData<Boolean> isGPSFix;
+    private Location mLastLocation;
+    private long mLastLocationMillis;
     final String[] REQUIRED_PERMISSIONS = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -44,6 +52,7 @@ public class LocationService implements LocationListener {
         return instance;
     }
 
+
     /**
      * Constructor for LocationService
      *
@@ -51,15 +60,24 @@ public class LocationService implements LocationListener {
      */
     protected LocationService(AppCompatActivity activity) {
         this.locationValue = new MutableLiveData<>();
+        this.isGPSFix = new MutableLiveData<>();
         this.activity = activity;
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        mGnssStatusCallback = new GnssStatus.Callback() {
+            @Override
+            public void onSatelliteStatusChanged(GnssStatus status) {
+                satelliteStatusChanged();
+            }
+        };
         // Register sensor listeners
         withLocationPermissions(this::registerLocationListener);
+
     }
 
     /**  This will only be called when we for sure have permissions. */
     @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
     private void registerLocationListener() {
+        locationManager.registerGnssStatusCallback(mGnssStatusCallback);
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 0,
@@ -93,7 +111,18 @@ public class LocationService implements LocationListener {
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
+        if (location == null) return;
+
+        mLastLocationMillis = SystemClock.elapsedRealtime();
+
+        mLastLocation = location;
         this.locationValue.postValue(new Pair<>(location.getLatitude(), location.getLongitude()));
+
+    }
+    private void satelliteStatusChanged() {
+
+        if (mLastLocation != null)
+            isGPSFix.postValue((SystemClock.elapsedRealtime() - mLastLocationMillis) < (GPS_UPDATE_INTERVAL * 2));
     }
 
     private void unregisterLocationListener() {
@@ -104,8 +133,15 @@ public class LocationService implements LocationListener {
         return this.locationValue;
     }
 
+    public LiveData<Boolean> getGPSFix(){ return this.isGPSFix;}
+
     public void setMockLocationSource(MutableLiveData<Pair<Double, Double>> mockData) {
         unregisterLocationListener();
         this.locationValue = mockData;
+    }
+
+    public void setMockGPSFixSource(MutableLiveData<Boolean> mockGPSFixSource) {
+        unregisterLocationListener();
+        this.isGPSFix = mockGPSFixSource;
     }
 }
