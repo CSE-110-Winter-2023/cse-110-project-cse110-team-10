@@ -90,6 +90,13 @@ public class LocationAPI {
     public void putLocationAsync(Location location) {
         var executor = Executors.newSingleThreadExecutor();
         var future = executor.submit(() -> putLocation(location));
+
+        try {
+            future.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     // Delete Location on Server

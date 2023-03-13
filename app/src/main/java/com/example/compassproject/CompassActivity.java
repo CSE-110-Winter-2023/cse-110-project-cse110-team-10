@@ -99,7 +99,7 @@ public class CompassActivity extends AppCompatActivity {
         }
     }
     // Update coordinates both locally and remotely
-    private void updateCoordinates(Pair<Double, Double> location) {
+    public void updateCoordinates(Pair<Double, Double> location) {
         updateCoordinatesLocal(location);
         updateCoordinatesRemote(location);
     }
