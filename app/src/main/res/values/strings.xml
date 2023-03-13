@@ -8,11 +8,14 @@
 
 
     <string name="saveLocation">LocationData</string>
+    <string name="saveUserInfo">UserData</string>
     <string name="friends_uid_label">Friend\'s UID</string>
     <string name="Add_Friends_submit_button">Submit</string>
     <string name="Add_Friends_Back_button">Back</string>
     <string name="Add_Friends_Label">Add Friends Page</string>
     <string name="add_friend">Add Friend</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="enter_your_name">Enter your name</string>
 
 
 </resources>

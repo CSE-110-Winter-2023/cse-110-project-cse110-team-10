@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -37,6 +38,8 @@ public class CompassActivity extends AppCompatActivity {
     //radius of compass in miles, default is 10 miles
     private int zoomRadius = 10;
     private ImageView compass;
+    private CircleView gpsIndicator;
+    private TextView timeIndicator;
 
     CompassViewModel viewModel;
 
@@ -62,6 +65,10 @@ public class CompassActivity extends AppCompatActivity {
         locMap = new HashMap<>();
         locationArray = new ArrayList<>();
 
+        // Save GPS Indicator
+        gpsIndicator = findViewById(R.id.statusIndicator);
+        timeIndicator = findViewById(R.id.timeIndicator);
+
         // Make sure compass has been set up on UI
         compass = (ImageView) findViewById(R.id.compass_face);
         ViewTreeObserver observer = compass.getViewTreeObserver();
@@ -82,6 +89,8 @@ public class CompassActivity extends AppCompatActivity {
                     updateCardinalAxisLabels();
                     updateAllFriendLocations();
                 });
+
+                //TODO: Add observer for GPS Status from LocationService
 
                 compass.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
@@ -267,5 +276,16 @@ public class CompassActivity extends AppCompatActivity {
     public void onAddFriendsButtonClicked(View view) {
         Intent intent = new Intent(this, AddFriendsActivity.class);
         startActivity(intent);
+    }
+
+    public void setGPSStatusTrue(){
+        gpsIndicator.setColor(Color.GREEN);
+        timeIndicator.setVisibility(View.INVISIBLE);
+    }
+
+    public void setSetGPSStatusFalse(long time){
+        gpsIndicator.setColor(Color.RED);
+        timeIndicator.setVisibility(View.VISIBLE);
+        timeIndicator.setText(Utilities.formatElapsedTime(time));
     }
 }

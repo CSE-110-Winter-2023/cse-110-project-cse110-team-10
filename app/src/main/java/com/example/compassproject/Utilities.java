@@ -23,5 +23,9 @@ public class Utilities {
         AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
     }
+
+    public static String formatElapsedTime(long time) {
+        return time + "";
+    }
 }
 
