@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
@@ -88,27 +87,27 @@ public class CompassActivityTesterMain {
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.onActivity(activity -> {
             // Get views
-            CircleView gpsIndicator = activity.findViewById(R.id.statusIndicator);
+            TextView gpsIndicator = activity.findViewById(R.id.statusIndicator);
             TextView timeIndicator = activity.findViewById(R.id.timeIndicator);
 
             // Test GPS Status set to true
             activity.setGPSStatusTrue();
 
-            assertEquals(Color.GREEN, gpsIndicator.getColor());
+            assertEquals(Color.GREEN, gpsIndicator.getCurrentTextColor());
             assertEquals(View.INVISIBLE, timeIndicator.getVisibility());
 
             // Test GPS Status toggle to false
             long testTime = 1000L;
             activity.setSetGPSStatusFalse(testTime);
 
-            assertEquals(Color.RED, gpsIndicator.getColor());
+            assertEquals(Color.RED, gpsIndicator.getCurrentTextColor());
             assertEquals(View.VISIBLE, timeIndicator.getVisibility());
             assertEquals(Utilities.formatElapsedTime(testTime), timeIndicator.getText());
 
             // Test GPS Status toggle back to true
             activity.setGPSStatusTrue();
 
-            assertEquals(Color.GREEN, gpsIndicator.getColor());
+            assertEquals(Color.GREEN, gpsIndicator.getCurrentTextColor());
             assertEquals(View.INVISIBLE, timeIndicator.getVisibility());
         });
     }
