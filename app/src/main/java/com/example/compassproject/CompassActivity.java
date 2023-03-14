@@ -7,12 +7,15 @@ import androidx.lifecycle.LiveData;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import androidx.core.util.Pair;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,10 +37,10 @@ public class CompassActivity extends AppCompatActivity {
     private double longitude;
     private int radius;
 
-    //radius of compass in miles, default is 10 miles
-    private int zoomRadius = 10;
     private ImageView compass;
+    SharedPreferences preferences;
 
+    int zoomRadius;
     CompassViewModel viewModel;
 
     ArrayList<LiveData<Location>> locationArray;
@@ -52,6 +55,10 @@ public class CompassActivity extends AppCompatActivity {
 
         // Create View Model
         viewModel = setupViewModel();
+        preferences = getSharedPreferences("ZoomData", Context.MODE_PRIVATE);
+
+        ZoomService zoomService = new ZoomService(this);
+        zoomRadius = zoomService.getZoomLevel();
 
         // Create location and orientation services
         LocationService ls = LocationService.singleton(this);
@@ -86,6 +93,38 @@ public class CompassActivity extends AppCompatActivity {
                 compass.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+
+        Button zoomInButton = findViewById(R.id.zoom_in_btn);
+        Button zoomOutButton = findViewById(R.id.zoom_out_btn);
+        zoomInButton.setOnClickListener(v -> {
+            zoomService.zoomIn();
+            zoomRadius = zoomService.getZoomLevel();
+            updateZoomButtonState();
+            Log.d("Zoom Level", " "+ zoomRadius);
+            updateAllFriendLocations();
+        });
+        zoomOutButton.setOnClickListener(v -> {
+            zoomService.zoomOut();
+            zoomRadius = zoomService.getZoomLevel();
+            updateZoomButtonState();
+            Log.d("Zoom Level", " "+ zoomRadius);
+            updateAllFriendLocations();
+        });
+    }
+
+    private void updateZoomButtonState() {
+        Button zoomInButton = findViewById(R.id.zoom_in_btn);
+        Button zoomOutButton = findViewById(R.id.zoom_out_btn);
+        if (zoomRadius == 1) {
+            zoomInButton.setEnabled(false);
+        } else {
+            zoomInButton.setEnabled(true);
+        }
+        if (zoomRadius == 1000) {
+            zoomOutButton.setEnabled(false);
+        } else {
+            zoomOutButton.setEnabled(true);
+        }
     }
 
     public void updateAllFriendLocations(){
@@ -93,7 +132,6 @@ public class CompassActivity extends AppCompatActivity {
         for(int i = 0; i < locationArray.size(); i++){
             LiveData<Location> currLocLive = locationArray.get(i);
             Location currLoc = currLocLive.getValue();
-
             updateFriendLocations(currLoc);
         }
     }
@@ -178,7 +216,6 @@ public class CompassActivity extends AppCompatActivity {
             // Create circle in the given angle
             View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc), getDistance(currLoc), zoomRadius, currLoc.label);
 
-
             locMap.put(currLoc.public_code, loc_view);
 
             // caching background thread
@@ -225,6 +262,7 @@ public class CompassActivity extends AppCompatActivity {
     }
 
     private void updateFriendLocations(Location location) {
+        Log.d("CompassActivity", "updateAllFriendLocations() called");
         // Update circle in the given angle
         View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomRadius, location.label);
         locMap.put(location.public_code, newView);
@@ -255,15 +293,12 @@ public class CompassActivity extends AppCompatActivity {
         longitude = loc.second.floatValue();
         Log.i("Tag", "USER LOCATION " + latitude + " " + longitude);
     }
-
     public float getLatitude(){
         return (float) latitude;
     }
-
     public float getLongitude(){
         return (float) longitude;
     }
-
     public void onAddFriendsButtonClicked(View view) {
         Intent intent = new Intent(this, AddFriendsActivity.class);
         startActivity(intent);

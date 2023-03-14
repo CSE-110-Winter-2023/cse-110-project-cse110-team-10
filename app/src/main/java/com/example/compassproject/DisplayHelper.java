@@ -60,11 +60,8 @@ public class DisplayHelper {
                 return displaySingleLocation(activity, 1, radius, degrees, distance, maxDistance, friendName);
             }
 
-            //stays in circle as a TextView
+            //stays as circleView on the edge, return
             else {
-                cs.clone(cl);
-                cs.constrainCircle(loc_view.getId(), R.id.compass_face, radius, degrees);
-                cs.applyTo(cl);
                 return loc_view;
             }
         }
@@ -75,10 +72,10 @@ public class DisplayHelper {
                 return displaySingleLocation(activity, 1, radius, degrees, distance, maxDistance, friendName);
             }
 
-            //stays outside as a CircleView
+            //textView, staying inside but radius could have changed
             else {
                 cs.clone(cl);
-                cs.constrainCircle(loc_view.getId(), R.id.compass_face, radius, degrees);
+                cs.constrainCircle(loc_view.getId(), R.id.compass_face, (int) circleRad, degrees);
                 cs.applyTo(cl);
                 return loc_view;
             }
