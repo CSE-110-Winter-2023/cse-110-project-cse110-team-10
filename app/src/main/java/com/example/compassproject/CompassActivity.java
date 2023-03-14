@@ -1,22 +1,18 @@
 package com.example.compassproject;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.LiveData;
-
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import androidx.core.util.Pair;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.util.Pair;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.compassproject.ViewModel.CompassViewModel;
@@ -25,7 +21,6 @@ import com.example.compassproject.model.Location;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 public class CompassActivity extends AppCompatActivity {
     private HashMap<String, View> locMap;
@@ -38,7 +33,7 @@ public class CompassActivity extends AppCompatActivity {
     //radius of compass in miles, default is 10 miles
     private int zoomRadius = 10;
     private ImageView compass;
-    private CircleView gpsIndicator;
+    private TextView gpsIndicator;
     private TextView timeIndicator;
 
     CompassViewModel viewModel;
@@ -47,6 +42,8 @@ public class CompassActivity extends AppCompatActivity {
 
     ConstraintLayout.LayoutParams north_lp, south_lp, east_lp, west_lp;
     TextView north, south, east, west;
+
+    LocationService ls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +54,7 @@ public class CompassActivity extends AppCompatActivity {
         viewModel = setupViewModel();
 
         // Create location and orientation services
-        LocationService ls = LocationService.singleton(this);
+        ls = LocationService.singleton(this);
         this.reobserveLocation();
 
         OrientationService os = OrientationService.singleton(this);
@@ -90,11 +87,22 @@ public class CompassActivity extends AppCompatActivity {
                     updateAllFriendLocations();
                 });
 
-                //TODO: Add observer for GPS Status from LocationService
+                ls.getGPSFix().observe(CompassActivity.this, hasGPS ->{
+                    updateGPSStatus(hasGPS);
+                });
 
                 compass.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+    }
+
+    private void updateGPSStatus(Boolean hasGPS) {
+        if(hasGPS){
+            setGPSStatusTrue();
+        }
+        else{
+            setSetGPSStatusFalse(ls.getElapsedTime());
+        }
     }
 
     public void updateAllFriendLocations(){
@@ -279,12 +287,12 @@ public class CompassActivity extends AppCompatActivity {
     }
 
     public void setGPSStatusTrue(){
-        gpsIndicator.setColor(Color.GREEN);
+        gpsIndicator.setTextColor(Color.GREEN);
         timeIndicator.setVisibility(View.INVISIBLE);
     }
 
     public void setSetGPSStatusFalse(long time){
-        gpsIndicator.setColor(Color.RED);
+        gpsIndicator.setTextColor(Color.RED);
         timeIndicator.setVisibility(View.VISIBLE);
         timeIndicator.setText(Utilities.formatElapsedTime(time));
     }
