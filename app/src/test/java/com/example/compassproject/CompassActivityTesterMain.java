@@ -94,21 +94,20 @@ public class CompassActivityTesterMain {
             activity.setGPSStatusTrue();
 
             assertEquals(Color.GREEN, gpsIndicator.getCurrentTextColor());
-            assertEquals(View.INVISIBLE, timeIndicator.getVisibility());
+            assertEquals("Live", timeIndicator.getText());
 
             // Test GPS Status toggle to false
             long testTime = 1000L;
             activity.setSetGPSStatusFalse(testTime);
 
             assertEquals(Color.RED, gpsIndicator.getCurrentTextColor());
-            assertEquals(View.VISIBLE, timeIndicator.getVisibility());
             assertEquals(Utilities.formatElapsedTime(testTime), timeIndicator.getText());
 
             // Test GPS Status toggle back to true
             activity.setGPSStatusTrue();
 
             assertEquals(Color.GREEN, gpsIndicator.getCurrentTextColor());
-            assertEquals(View.INVISIBLE, timeIndicator.getVisibility());
+            assertEquals("Live", timeIndicator.getText());
         });
     }
 }

@@ -45,6 +45,8 @@ public class CompassActivity extends AppCompatActivity {
 
     LocationService ls;
 
+    boolean hasGPSFix;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +87,7 @@ public class CompassActivity extends AppCompatActivity {
                     updateOrientation(orientation);
                     updateCardinalAxisLabels();
                     updateAllFriendLocations();
+
                 });
 
                 ls.getGPSFix().observe(CompassActivity.this, hasGPS ->{
@@ -103,6 +106,8 @@ public class CompassActivity extends AppCompatActivity {
         else{
             setSetGPSStatusFalse(ls.getElapsedTime());
         }
+
+        hasGPSFix = hasGPS;
     }
 
     public void updateAllFriendLocations(){
@@ -266,6 +271,15 @@ public class CompassActivity extends AppCompatActivity {
         locationData.observe(this, this::onLocationChanged);
     }
 
+    public void reobserveGPSFix() {
+        var locationData = LocationService.singleton(this).getGPSFix();
+        locationData.observe(this, this::updateGPSStatus);
+    }
+
+    private void onGPSFixChanged(Boolean aBoolean) {
+        hasGPSFix = aBoolean;
+    }
+
     private void onLocationChanged(Pair<Double, Double> loc) {
 
         latitude = loc.first.floatValue();
@@ -288,12 +302,11 @@ public class CompassActivity extends AppCompatActivity {
 
     public void setGPSStatusTrue(){
         gpsIndicator.setTextColor(Color.GREEN);
-        timeIndicator.setVisibility(View.INVISIBLE);
+        timeIndicator.setText("Live");
     }
 
     public void setSetGPSStatusFalse(long time){
         gpsIndicator.setTextColor(Color.RED);
-        timeIndicator.setVisibility(View.VISIBLE);
         timeIndicator.setText(Utilities.formatElapsedTime(time));
     }
 }

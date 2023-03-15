@@ -45,6 +45,9 @@ public class LocationService implements LocationListener {
 
     private final LocationManager locationManager;
 
+    long elapsedTime;
+    boolean mocking = false;
+
     public static LocationService singleton(AppCompatActivity activity) {
         if (instance == null) {
             instance = new LocationService(activity);
@@ -118,11 +121,18 @@ public class LocationService implements LocationListener {
         mLastLocation = location;
         this.locationValue.postValue(new Pair<>(location.getLatitude(), location.getLongitude()));
 
-    }
-    private void satelliteStatusChanged() {
 
-        if (mLastLocation != null)
-            isGPSFix.postValue((SystemClock.elapsedRealtime() - mLastLocationMillis) < (60000));
+    }
+    public void satelliteStatusChanged() {
+        // if mock is true
+        if (!mocking) {
+            elapsedTime = SystemClock.elapsedRealtime() - mLastLocationMillis;
+            if (mLastLocation != null)
+                isGPSFix.postValue(elapsedTime < 60000);
+        }
+        else{
+            isGPSFix.setValue(elapsedTime < 60000);
+        }
     }
 
     private void unregisterLocationListener() {
@@ -144,7 +154,13 @@ public class LocationService implements LocationListener {
         unregisterLocationListener();
         this.isGPSFix = mockGPSFixSource;
     }
-    public long getElapsedTime(){
-        return SystemClock.elapsedRealtime() - mLastLocationMillis;
+
+    public void setMockElapsedTime(long time){
+        elapsedTime = time;
+        mocking = true;
     }
+    public long getElapsedTime(){
+        return elapsedTime;
+    }
+
 }
