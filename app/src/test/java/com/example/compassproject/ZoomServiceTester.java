@@ -33,7 +33,7 @@ public class ZoomServiceTester {
     @Test
     public void testGetZoomLevel() {
         int zoomLevel = zoomService.getZoomLevel();
-        assertEquals(10, zoomLevel);
+        assertEquals(2, zoomLevel);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class ZoomServiceTester {
         ZoomService.zoomOut();
         ZoomService.zoomOut();
         int zoomLevel = zoomService.getZoomLevel();
-        assertEquals(500, zoomLevel);
+        assertEquals(3, zoomLevel);
     }
 }
 
