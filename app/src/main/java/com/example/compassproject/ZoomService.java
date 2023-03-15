@@ -2,38 +2,36 @@ package com.example.compassproject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 public class ZoomService {
     private static SharedPreferences preferences;
-    private static int zoomRadius;
+    private static int zoomLevel;
     public ZoomService(Context context) {
         // Initialize shared preferences
         preferences = context.getSharedPreferences("ZoomData", Context.MODE_PRIVATE);
         // Load the zoom level from shared preferences
-        zoomRadius = preferences.getInt("zoom_radius", 10);
+        zoomLevel = preferences.getInt("zoom_level", 2);
     }
 
     public int getZoomLevel() {
-        zoomRadius = preferences.getInt("zoom_radius", 10);
-        return zoomRadius;
+        zoomLevel = preferences.getInt("zoom_level", 2);
+        return zoomLevel;
     }
 
     public static void zoomIn(){
         SharedPreferences.Editor editor = preferences.edit();
-        switch(zoomRadius) {
+        switch(zoomLevel) {
             case 1:
-            case 10:
-                editor.putInt("zoom_radius", 1);
+            case 2:
+                editor.putInt("zoom_level", 1);
                 editor.apply();
                 break;
-            case 500:
-                editor.putInt("zoom_radius", 10);
+            case 3:
+                editor.putInt("zoom_level", 2);
                 editor.apply();
                 break;
-                //TODO: Clarify outer zoom level
-            case 1000:
-                editor.putInt("zoom_radius", 500);
+            case 4:
+                editor.putInt("zoom_level", 3);
                 editor.apply();
                 break;
         }
@@ -41,19 +39,18 @@ public class ZoomService {
 
     public static void zoomOut() {
         SharedPreferences.Editor editor = preferences.edit();
-        switch(zoomRadius) {
+        switch(zoomLevel) {
             case 1:
-                editor.putInt("zoom_radius", 10);
+                editor.putInt("zoom_level", 2);
                 editor.apply();
                 break;
-            case 10:
-                editor.putInt("zoom_radius", 500);
+            case 2:
+                editor.putInt("zoom_level", 3);
                 editor.apply();
                 break;
-            case 500:
-                //TODO: Clarify outer zoom level
-            case 1000:
-                editor.putInt("zoom_radius", 1000);
+            case 3:
+            case 4:
+                editor.putInt("zoom_level", 4);
                 editor.apply();
                 break;
         }
