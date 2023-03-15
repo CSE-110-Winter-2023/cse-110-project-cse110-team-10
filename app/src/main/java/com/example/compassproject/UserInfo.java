@@ -28,6 +28,15 @@ public class UserInfo
         editor.apply();
     }
 
+    //stores user's private code in shared preference
+    public void setPrivateCode(String privateCode)
+    {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("PrivateCode", privateCode);
+        editor.apply();
+    }
+
+
     //checks if user has inputted a name
     public boolean hasName()
     {
@@ -45,6 +54,12 @@ public class UserInfo
     public String getUID()
     {
         return preferences.getString("UID", "");
+    }
+
+    // returns getPrivateCode
+    public String getPrivateCode()
+    {
+        return preferences.getString("PrivateCode", "");
     }
 
 

@@ -55,5 +55,18 @@ public class UserInfoTester {
         });
     }
 
+    @Test
+    public void testSavePrivateCodeCorrectly()
+    {
+        scenario.onActivity(activity -> {
+            SharedPreferences preferences = activity.getSharedPreferences("Test", Context.MODE_PRIVATE);
+            UserInfo u1 = new UserInfo(preferences);
+
+            u1.setPrivateCode("JuliaPrivateCode");
+
+            assertEquals("JuliaPrivateCode", u1.getPrivateCode());
+        });
+    }
+
 
 }
