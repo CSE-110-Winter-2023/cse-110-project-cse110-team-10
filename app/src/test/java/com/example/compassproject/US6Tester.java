@@ -84,8 +84,6 @@ public class US6Tester {
             // View 1 will be 0.5 miles to North
             var orientation1 = 0;
             var distance1 = 550;
-
-
             // Set UI as originally fully zoomed in
             assertEquals(2, zoomService.getZoomLevel());
             ZoomService.zoomOut();
