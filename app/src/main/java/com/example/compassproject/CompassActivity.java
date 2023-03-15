@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.Executors;
 
 public class CompassActivity extends AppCompatActivity {
     private HashMap<String, View> locMap;
@@ -273,27 +275,107 @@ public class CompassActivity extends AppCompatActivity {
         List<String> friendList = viewModel.getAllFriendUIDs(); // Move to ViewModel
         int numFriends = friendList.size();
 
+        //calculates the radius adjustment needed for any stacked friends
+
         // showing red dots which is saved user locations
         for(int i = 0; i < numFriends; i++){
             LiveData<Location> currLocLive = viewModel.getLiveLocation(friendList.get(i));
             Location currLoc = currLocLive.getValue();
 
             // Create circle in the given angle
-            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc), getDistance(currLoc), zoomLevel, currLoc.label);
+            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc) , getDistance(currLoc), zoomLevel, currLoc.label);
 
             locMap.put(currLoc.public_code, loc_view);
 
             // caching background thread
             locationArray.add(currLocLive);
 
-            //Will be replaced with new code for handling CircleView vs Label
-
-            if(loc_view instanceof CircleView) {
-                ((CircleView) loc_view).setIndex(i);
-                DisplayLabels.displayPopUp(CompassActivity.this, (CircleView) loc_view);
-            }
             // Set observer on LiveData so UI only updates when there is a change
             currLocLive.observe(this, this::updateFriendLocations);
+        }
+    }
+
+    //calculates radius adjustment for each friend and returns it as a list with respective indices matching each friend
+    public Map<String, Integer> calculateRadiusDiff()
+    {
+        Map<String, Integer> radiusDiffList = new HashMap<>();
+        for(int i = 0; i<locationArray.size(); i++)
+        {
+            LiveData<Location> currLocLive = locationArray.get(i);
+            Location currLoc = currLocLive.getValue();
+            radiusDiffList.put(currLoc.public_code, 0);
+        }
+
+        for(int i = 0; i<locationArray.size(); i++)
+        {
+            LiveData<Location> currLocLive = locationArray.get(i);
+            Location currLoc = currLocLive.getValue();
+
+            String key = currLoc.public_code;
+
+            //skips locations that already stack with another location
+            if(radiusDiffList.get(key) != 0)
+            {
+                continue;
+            }
+
+            float currLocDegree = getDegree(currLoc);
+            double currLocDistance = getDistance(currLoc);
+            int currZoomLevel = zoomLevel(currLocDistance);
+
+            for(int x = i+1; x<locationArray.size(); x++)
+            {
+                //skips locations that already stack with another location
+                if(radiusDiffList.get(key) != 0)
+                {
+                    continue;
+                }
+
+                LiveData<Location> tempCurrLocLive = locationArray.get(x);
+                Location tempCurrLoc = tempCurrLocLive.getValue();
+                String tempKey = tempCurrLoc.public_code;
+
+                float tempCurrLocDegree = getDegree(tempCurrLoc);
+                double tempCurrLocDistance = getDistance(tempCurrLoc);
+                int tempCurrZoomLevel = zoomLevel(tempCurrLocDistance);
+
+                if(tempCurrZoomLevel == currZoomLevel && Math.abs(tempCurrLocDegree - currLocDegree) <= 6 )
+                {
+                    //TODO mess around with radius diff value
+                    radiusDiffList.replace(key, -120);
+                    radiusDiffList.replace(tempKey, 120);
+
+                    break;
+                }
+
+            }
+
+
+        }
+
+        return radiusDiffList;
+    }
+
+    //TODO make sure inclusion is correct
+    //calculate which zoom level the location is on
+    private int zoomLevel(double distance)
+    {
+        if(distance >= 0 && distance < 1)
+        {
+            return 1;
+        }
+        else if(distance >= 1 && distance < 10)
+        {
+            return 2;
+        }
+        else if(distance >= 10 && distance < 500)
+        {
+            return 3;
+        }
+
+        else
+        {
+            return 4;
         }
     }
 
@@ -327,10 +409,18 @@ public class CompassActivity extends AppCompatActivity {
     }
 
     private void updateFriendLocations(Location location) {
-        Log.d("CompassActivity", "updateAllFriendLocations() called");
-        // Update circle in the given angle
-        View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomLevel, location.label);
-        locMap.put(location.public_code, newView);
+        var executor = Executors.newSingleThreadExecutor();
+        var future = executor.submit(() -> calculateRadiusDiff());
+        try {
+            Map<String, Integer> radiusDiffList = future.get();
+            Log.d("CompassActivity", "updateAllFriendLocations() called");
+            // Update circle in the given angle
+            View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location) - radiusDiffList.get(location.public_code), zoomLevel, location.label);
+            locMap.put(location.public_code, newView);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     /*
     These are for server testing only
