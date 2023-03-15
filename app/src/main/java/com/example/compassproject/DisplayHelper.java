@@ -216,57 +216,21 @@ public class DisplayHelper {
     public static View updateLocationOne(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName) {
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
-        if (distance > 1) {
-            if (loc_view instanceof TextView) {
-                cl.removeView(loc_view);
-                return displaySingleLocation(activity, 1, radius, degrees, distance, 1, friendName);
-            }
-
-            //stays as circleView on the edge, return
-            else {
-                return loc_view;
-            }
-        } else {
-            cl.removeView(loc_view);
-            return displaySingleLocation(activity, 1, radius, degrees, distance, 1, friendName);
-        }
+        cl.removeView(loc_view);
+        return displaySingleLocation(activity, 1, radius, degrees, distance, 1, friendName);
     }
 
     public static View updateLocationTwo(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName) {
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
-        if (distance > 10) {
-            if (loc_view instanceof TextView) {
-                cl.removeView(loc_view);
-                return displaySingleLocation(activity, 1, radius, degrees, distance, 2, friendName);
-            }
-
-            //stays as circleView on the edge, return
-            else {
-                return loc_view;
-            }
-        } else {
-            cl.removeView(loc_view);
-            return displaySingleLocation(activity, 1, radius, degrees, distance, 2, friendName);
-        }
+        cl.removeView(loc_view);
+        return displaySingleLocation(activity, 1, radius, degrees, distance, 2, friendName);
     }
     public static View updateLocationThree(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName) {
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
-        if (distance > 500) {
-            if (loc_view instanceof TextView) {
-                cl.removeView(loc_view);
-                return displaySingleLocation(activity, 1, radius, degrees, distance, 3, friendName);
-            }
-
-            //stays as circleView on the edge, return
-            else {
-                return loc_view;
-            }
-        } else {
-            cl.removeView(loc_view);
-            return displaySingleLocation(activity, 1, radius, degrees, distance, 3, friendName);
-        }
+        cl.removeView(loc_view);
+        return displaySingleLocation(activity, 1, radius, degrees, distance, 3, friendName);
     }
 
     public static View updateLocationFour(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName) {
