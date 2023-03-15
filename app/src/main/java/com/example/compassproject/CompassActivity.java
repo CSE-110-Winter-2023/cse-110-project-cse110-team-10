@@ -40,13 +40,15 @@ public class CompassActivity extends AppCompatActivity {
     private ImageView compass;
     SharedPreferences preferences;
 
-    int zoomRadius;
+    int zoomLevel;
     CompassViewModel viewModel;
 
     ArrayList<LiveData<Location>> locationArray;
 
     ConstraintLayout.LayoutParams north_lp, south_lp, east_lp, west_lp;
+    ConstraintLayout.LayoutParams zoom_1_lp, zoom_2_lp, zoom_3_lp;
     TextView north, south, east, west;
+    ImageView zoom_1, zoom_2, zoom_3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class CompassActivity extends AppCompatActivity {
         preferences = getSharedPreferences("ZoomData", Context.MODE_PRIVATE);
 
         ZoomService zoomService = new ZoomService(this);
-        zoomRadius = zoomService.getZoomLevel();
+        zoomLevel = zoomService.getZoomLevel();
 
         // Create location and orientation services
         LocationService ls = LocationService.singleton(this);
@@ -98,16 +100,18 @@ public class CompassActivity extends AppCompatActivity {
         Button zoomOutButton = findViewById(R.id.zoom_out_btn);
         zoomInButton.setOnClickListener(v -> {
             zoomService.zoomIn();
-            zoomRadius = zoomService.getZoomLevel();
+            zoomLevel = zoomService.getZoomLevel();
             updateZoomButtonState();
-            Log.d("Zoom Level", " "+ zoomRadius);
+            Log.d("Zoom Level", " "+ zoomLevel);
+            updateZoomCircles();
             updateAllFriendLocations();
         });
         zoomOutButton.setOnClickListener(v -> {
             zoomService.zoomOut();
-            zoomRadius = zoomService.getZoomLevel();
+            zoomLevel = zoomService.getZoomLevel();
             updateZoomButtonState();
-            Log.d("Zoom Level", " "+ zoomRadius);
+            Log.d("Zoom Level", " "+ zoomLevel);
+            updateZoomCircles();
             updateAllFriendLocations();
         });
     }
@@ -115,12 +119,12 @@ public class CompassActivity extends AppCompatActivity {
     private void updateZoomButtonState() {
         Button zoomInButton = findViewById(R.id.zoom_in_btn);
         Button zoomOutButton = findViewById(R.id.zoom_out_btn);
-        if (zoomRadius == 1) {
+        if (zoomLevel == 1) {
             zoomInButton.setEnabled(false);
         } else {
             zoomInButton.setEnabled(true);
         }
-        if (zoomRadius == 1000) {
+        if (zoomLevel == 4) {
             zoomOutButton.setEnabled(false);
         } else {
             zoomOutButton.setEnabled(true);
@@ -156,7 +160,9 @@ public class CompassActivity extends AppCompatActivity {
 
     private void setupUI() {
         setupCardinalAxisLabels();
+        setUpZoomCircles();
         setupFriendLocations();
+        updateZoomButtonState();
     }
 
     private void updateCardinalAxisLabels(){
@@ -204,6 +210,65 @@ public class CompassActivity extends AppCompatActivity {
         radius = compass.getHeight() / 2;
     }
 
+    public void setUpZoomCircles() {
+        zoom_1 = (ImageView) findViewById(R.id.zoom_circle_1);
+        zoom_2 = (ImageView) findViewById(R.id.zoom_circle_2);
+        zoom_3 = (ImageView) findViewById(R.id.zoom_circle_3);
+
+        zoom_1_lp = (ConstraintLayout.LayoutParams) zoom_1.getLayoutParams();
+        zoom_2_lp = (ConstraintLayout.LayoutParams) zoom_2.getLayoutParams();
+        zoom_3_lp = (ConstraintLayout.LayoutParams) zoom_3.getLayoutParams();
+
+        updateZoomCircles();
+    }
+    //
+    public void updateZoomCircles() {
+        int z_radius = radius -64;
+        switch (zoomLevel) {
+            case 1: // at dist 1
+                zoom_1.setVisibility(View.INVISIBLE);
+                zoom_2.setVisibility(View.INVISIBLE);
+                zoom_3.setVisibility(View.INVISIBLE);
+
+                break;
+            case 2: //at dist 1-10
+                zoom_1.setVisibility(View.VISIBLE);
+                zoom_2.setVisibility(View.INVISIBLE);
+                zoom_3.setVisibility(View.INVISIBLE);
+
+                zoom_1_lp.width = (int) Math.ceil(2.0 * z_radius * (1.0/2));
+                zoom_1.setLayoutParams(zoom_1_lp);
+
+                break;
+            case 3: //at dist 10-500
+                zoom_1.setVisibility(View.VISIBLE);
+                zoom_2.setVisibility(View.VISIBLE);
+                zoom_3.setVisibility(View.INVISIBLE);
+
+                zoom_1_lp.width = (int) Math.ceil(2.0 * z_radius * (1.0/3));
+                zoom_1.setLayoutParams(zoom_1_lp);
+
+                zoom_2_lp.width = (int) Math.ceil(2.0 * z_radius * (2.0/3));
+                zoom_2.setLayoutParams(zoom_2_lp);
+                break;
+            case 4: //at dist 500+
+                zoom_1.setVisibility(View.VISIBLE);
+                zoom_2.setVisibility(View.VISIBLE);
+                zoom_3.setVisibility(View.VISIBLE);
+
+                zoom_1_lp.width = (int) Math.ceil(2.0 * z_radius * (1.0/4));
+                zoom_1.setLayoutParams(zoom_1_lp);
+
+                zoom_2_lp.width = (int) Math.ceil(2.0 * z_radius * (1.0/2));
+                zoom_2.setLayoutParams(zoom_2_lp);
+
+                zoom_3_lp.width = (int) Math.ceil(2.0 * z_radius * (3.0/4));
+                zoom_3.setLayoutParams(zoom_3_lp);
+
+                break;
+        }
+    }
+
     private void setupFriendLocations(){
         List<String> friendList = viewModel.getAllFriendUIDs(); // Move to ViewModel
         int numFriends = friendList.size();
@@ -214,7 +279,7 @@ public class CompassActivity extends AppCompatActivity {
             Location currLoc = currLocLive.getValue();
 
             // Create circle in the given angle
-            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc), getDistance(currLoc), zoomRadius, currLoc.label);
+            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc), getDistance(currLoc), zoomLevel, currLoc.label);
 
             locMap.put(currLoc.public_code, loc_view);
 
@@ -264,7 +329,7 @@ public class CompassActivity extends AppCompatActivity {
     private void updateFriendLocations(Location location) {
         Log.d("CompassActivity", "updateAllFriendLocations() called");
         // Update circle in the given angle
-        View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomRadius, location.label);
+        View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomLevel, location.label);
         locMap.put(location.public_code, newView);
     }
     /*
