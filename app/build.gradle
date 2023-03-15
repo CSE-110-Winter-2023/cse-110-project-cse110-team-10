@@ -32,7 +32,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
-
     dexOptions {
         javaMaxHeapSize "4G"
     }
