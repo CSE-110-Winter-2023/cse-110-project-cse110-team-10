@@ -34,31 +34,38 @@ public class US6Tester {
         zoomService = new ZoomService(context);
     }
 
-    // Tests if locations change from Circle to Text when both zoom in and zoom out
-
-    //TODO: Add second test before merging US6
-
+    @Test
+    public void testOneMile(){
+        ActivityScenario<CompassActivity> scenario = ActivityScenario.launch(CompassActivity.class);
+        scenario.moveToState(Lifecycle.State.CREATED);
+        scenario.moveToState(Lifecycle.State.STARTED);
+        scenario.onActivity(activity -> {
+            var radius = 400;
+            var orientation1 = 0;
+            var distance1 = 1;
+            assertEquals(2, zoomService.getZoomLevel());
+            View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
+            assertEquals(true, view1 instanceof TextView);
+            ZoomService.zoomIn();
+            assertEquals(1, zoomService.getZoomLevel());
+            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
+            assertEquals(true, view1 instanceof CircleView);
+        });
+    }
     @Test
     public void test500PlusDistance(){
         ActivityScenario<CompassActivity> scenario = ActivityScenario.launch(CompassActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.onActivity(activity -> {
-            // Zoomed in all the way so only friends within 1 mile will show name
             var radius = 400;
-
-            // View 1 will be 0.5 miles to North
             var orientation1 = 0;
             var distance1 = 550;
-            // Set UI as originally fully zoomed in
             assertEquals(2, zoomService.getZoomLevel());
             ZoomService.zoomOut();
             assertEquals(3, zoomService.getZoomLevel());
             View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
             assertEquals(true, view1 instanceof CircleView); // View 1 is not in range
-
-            // Tests zoom out
-
             ZoomService.zoomOut();
             assertEquals(4, zoomService.getZoomLevel());
             view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");

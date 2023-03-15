@@ -25,7 +25,7 @@ public class ZoomServiceTester {
         Context context = ApplicationProvider.getApplicationContext();
         SharedPreferences preferences = context.getSharedPreferences("ZoomData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("zoom_radius", 10);
+        editor.putInt("zoom_level", 2);
         editor.apply();
         zoomService = new ZoomService(context);
     }
@@ -53,10 +53,17 @@ public class ZoomServiceTester {
 
     @Test
     public void testZoomOutMax() {
-        ZoomService.zoomOut();
-        ZoomService.zoomOut();
         int zoomLevel = zoomService.getZoomLevel();
+        assertEquals(2, zoomLevel);
+        ZoomService.zoomOut();
+        zoomLevel = zoomService.getZoomLevel();
         assertEquals(3, zoomLevel);
+        ZoomService.zoomOut();
+        zoomLevel = zoomService.getZoomLevel();
+        assertEquals(4, zoomLevel);
+        ZoomService.zoomOut();
+        zoomLevel = zoomService.getZoomLevel();
+        assertEquals(4, zoomLevel);
     }
 }
 
