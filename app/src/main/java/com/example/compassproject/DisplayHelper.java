@@ -5,6 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Intent;
 import android.content.Context;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.View;
 
 import android.content.SharedPreferences;
@@ -39,8 +40,19 @@ public class DisplayHelper {
         //display name
         else{
             TextView friendName = new TextView(activity);
+
+            ViewGroup.LayoutParams params = friendName.getLayoutParams();
+
+            // Set labels to truncate
+            params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            friendName.setLayoutParams(params);
+            friendName.setEllipsize(TextUtils.TruncateAt.END);
+            friendName.setSingleLine(true);
+
             friendName.setText(name);
             cl.addView(friendName, loc_id);
+
             friendName.setId(View.generateViewId());
             cs.clone(cl);
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
