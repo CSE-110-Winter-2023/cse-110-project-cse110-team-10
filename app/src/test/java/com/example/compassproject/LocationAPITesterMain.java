@@ -34,6 +34,7 @@ public class LocationAPITesterMain {
         assertEquals(loc1.label, loc2.label);
         assertEquals(loc1.latitude, loc2.latitude, 0.1);
         assertEquals(loc1.longitude, loc2.longitude, 0.2);
+        singleTon.deleteLocation(loc1);
     }
 
     @Test
