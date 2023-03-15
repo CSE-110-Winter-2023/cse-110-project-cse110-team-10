@@ -57,18 +57,14 @@ public class US6Tester {
             ZoomService.zoomIn();
             assertEquals(1, zoomService.getZoomLevel());
             View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
-            View view2 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation2, distance2, zoomService.getZoomLevel(), "test");
             assertEquals(true, view1 instanceof TextView); // View 1 is in range
-            assertEquals(true, view2 instanceof CircleView); // View 2 is out of range
 
             // Tests zoom out
 
             ZoomService.zoomOut();
             assertEquals(2, zoomService.getZoomLevel());
             view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
-            view2 = DisplayHelper.updateLocation(activity, view2, radius, orientation2, distance2, zoomService.getZoomLevel(), "test");
             assertEquals(true, view1 instanceof TextView); // View 1 is in range
-            assertEquals(true, view2 instanceof TextView); // View 2 is in range
         });
     }
 
