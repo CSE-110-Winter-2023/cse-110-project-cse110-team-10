@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,11 +24,18 @@ import org.robolectric.shadows.ShadowApplication;
 
 @RunWith(RobolectricTestRunner.class)
 public class CompassActivityTesterMain {
+    Application application;
     @Before
     public void setup() {
-        Application application = ApplicationProvider.getApplicationContext();
+        application = ApplicationProvider.getApplicationContext();
         ShadowApplication app = Shadows.shadowOf(application);
         app.grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION);
+        FriendEntryDatabase.getSingleton(application);
+    }
+
+    @After
+    public void cleanUp(){
+        FriendEntryDatabase.getSingleton(application).close();
     }
 
     @Test

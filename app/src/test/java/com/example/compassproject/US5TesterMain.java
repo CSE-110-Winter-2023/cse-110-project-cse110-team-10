@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,11 +21,19 @@ import org.robolectric.shadows.ShadowApplication;
 
 @RunWith(RobolectricTestRunner.class)
 public class US5TesterMain {
+    Application application;
     @Before
     public void setup() {
-        Application application = ApplicationProvider.getApplicationContext();
+        application = ApplicationProvider.getApplicationContext();
         ShadowApplication app = Shadows.shadowOf(application);
         app.grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION);
+        FriendEntryDatabase.getSingleton(application);
+
+    }
+
+    @After
+    public void cleanUp(){
+        FriendEntryDatabase.getSingleton(application).close();
     }
 
     @Test
@@ -37,12 +46,13 @@ public class US5TesterMain {
             TextView gpsIndicator = activity.findViewById(R.id.statusIndicator);
             TextView timeIndicator = activity.findViewById(R.id.timeIndicator);
 
-            // WE have connection
+            // We have connection
             activity.setGPSStatusTrue();
 
             // We lost connection for 30s
             LocationService ls = LocationService.singleton(activity);
             ls.setMockElapsedTime(30000);
+            ls.satelliteStatusChanged();
 
             activity.reobserveGPSFix();
 

@@ -121,7 +121,6 @@ public class LocationService implements LocationListener {
         mLastLocation = location;
         this.locationValue.postValue(new Pair<>(location.getLatitude(), location.getLongitude()));
 
-
     }
     public void satelliteStatusChanged() {
         // if mock is true
