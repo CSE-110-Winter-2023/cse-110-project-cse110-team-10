@@ -36,7 +36,7 @@ public class CompassActivityTesterMain {
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.onActivity(activity -> {
-            View view = DisplayHelper.displaySingleLocation(activity, 1,400, 0,100, 2, "test" );
+            View view = DisplayHelper.displaySingleLocation(activity, 1,400, 0,100, 2, "test" , 0);
             assertEquals(true, view instanceof CircleView);
 
         });
@@ -48,7 +48,7 @@ public class CompassActivityTesterMain {
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.onActivity(activity -> {
-            View view = DisplayHelper.displaySingleLocation(activity, 1,400, 0,20, 3, "test" );
+            View view = DisplayHelper.displaySingleLocation(activity, 1,400, 0,20, 3, "test", 0 );
             assertEquals(true, view instanceof TextView);
 
         });
@@ -62,10 +62,10 @@ public class CompassActivityTesterMain {
         scenario.onActivity(activity -> {
             ImageView compass = (ImageView) activity.findViewById(R.id.compass_face);
             int radius =  compass.getHeight() / 2;
-            View view = DisplayHelper.displaySingleLocation(activity, 1, radius, 0,100, 2, "test" );
+            View view = DisplayHelper.displaySingleLocation(activity, 1, radius, 0,100, 2, "test", 0 );
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) view.getLayoutParams();
             assertEquals(radius, params.circleRadius);
-            DisplayHelper.updateLocation(activity, view, radius, 0, 2000, 2,"test");
+            DisplayHelper.updateLocation(activity, view, radius, 0, 2000, 2,"test", 0);
             params = (ConstraintLayout.LayoutParams) view.getLayoutParams();
             assertEquals(radius, params.circleRadius);
 

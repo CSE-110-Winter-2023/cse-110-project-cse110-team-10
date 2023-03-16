@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -17,6 +18,7 @@ import androidx.core.util.Pair;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.lifecycle.ViewModelProvider;
@@ -283,7 +285,7 @@ public class CompassActivity extends AppCompatActivity {
             Location currLoc = currLocLive.getValue();
 
             // Create circle in the given angle
-            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc) , getDistance(currLoc), zoomLevel, currLoc.label);
+            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc) , getDistance(currLoc), zoomLevel, currLoc.label, 0);
 
             locMap.put(currLoc.public_code, loc_view);
 
@@ -339,24 +341,18 @@ public class CompassActivity extends AppCompatActivity {
                 double tempCurrLocDistance = getDistance(tempCurrLoc);
                 int tempCurrZoomLevel = zoomLevel(tempCurrLocDistance);
 
-                if(tempCurrZoomLevel == currZoomLevel && Math.abs(tempCurrLocDegree - currLocDegree) <= 6 )
+                if(tempCurrZoomLevel == currZoomLevel && Math.abs(tempCurrLocDegree - currLocDegree) <= 12 )
                 {
-                    //TODO mess around with radius diff value
-                    radiusDiffList.replace(key, -120);
-                    radiusDiffList.replace(tempKey, 120);
+                    radiusDiffList.replace(key, -30);
+                    radiusDiffList.replace(tempKey, 30);
 
                     break;
                 }
-
             }
-
-
         }
-
         return radiusDiffList;
     }
 
-    //TODO make sure inclusion is correct
     //calculate which zoom level the location is on
     private int zoomLevel(double distance)
     {
@@ -415,13 +411,14 @@ public class CompassActivity extends AppCompatActivity {
             Map<String, Integer> radiusDiffList = future.get();
             Log.d("CompassActivity", "updateAllFriendLocations() called");
             // Update circle in the given angle
-            View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location) - radiusDiffList.get(location.public_code), zoomLevel, location.label);
+            View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomLevel, location.label, radiusDiffList.get(location.public_code));
             locMap.put(location.public_code, newView);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     /*
     These are for server testing only
      */

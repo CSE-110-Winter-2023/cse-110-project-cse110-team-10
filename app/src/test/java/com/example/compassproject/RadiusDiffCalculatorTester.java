@@ -44,8 +44,8 @@ public class RadiusDiffCalculatorTester
 
             Map<String, Integer> radiusDiffList = activity.calculateRadiusDiff();
 
-            assertEquals((long)-120, (long) radiusDiffList.get(loc1.getValue().public_code));
-            assertEquals((long) 120, (long) radiusDiffList.get(loc2.getValue().public_code));
+            assertEquals((long)-30, (long) radiusDiffList.get(loc1.getValue().public_code));
+            assertEquals((long) 30, (long) radiusDiffList.get(loc2.getValue().public_code));
             assertEquals((long) 0, (long) radiusDiffList.get(loc3.getValue().public_code));
 
 
