@@ -36,7 +36,7 @@ public class US4TesterMain {
         scenario.onActivity(activity -> {
             // Zoomed in all the way so only friends within 1 mile will show name
             var radius = 400;
-            var maxDistance = 1;
+            var zoomLevel = 1;
 
             // View 1 will be 0.5 miles to North
             var orientation1 = 0;
@@ -48,24 +48,24 @@ public class US4TesterMain {
 
             // Set UI as originally fully zoomed in
 
-            View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, maxDistance, "test");
-            View view2 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation2, distance2, maxDistance, "test");
+            View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, 1, "test");
+            View view2 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation2, distance2, 1, "test");
             assertEquals(true, view1 instanceof TextView); // View 1 is in range
             assertEquals(true, view2 instanceof CircleView); // View 2 is out of range
 
             // Tests zoom out
 
-            maxDistance = 10; // Zoom out to include all locations within 10 miles
-            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, maxDistance, "test");
-            view2 = DisplayHelper.updateLocation(activity, view2, radius, orientation2, distance2, maxDistance, "test");
+            zoomLevel = 2; // Zoom out to include all locations within 10 miles
+            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, zoomLevel, "test");
+            view2 = DisplayHelper.updateLocation(activity, view2, radius, orientation2, distance2, zoomLevel, "test");
             assertEquals(true, view1 instanceof TextView); // View 1 is in range
             assertEquals(true, view2 instanceof TextView); // View 2 is in range
 
             // Tests zoom in
 
-            maxDistance = 1; // Zoom out to include all locations within 1 mile
-            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, maxDistance, "test");
-            view2 = DisplayHelper.updateLocation(activity, view2, radius, orientation2, distance2, maxDistance, "test");
+            zoomLevel = 1; // Zoom out to include all locations within 1 mile
+            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, zoomLevel, "test");
+            view2 = DisplayHelper.updateLocation(activity, view2, radius, orientation2, distance2, zoomLevel, "test");
             assertEquals(true, view1 instanceof TextView); // View 1 is in range
             assertEquals(true, view2 instanceof CircleView); // View 2 is in range
         });

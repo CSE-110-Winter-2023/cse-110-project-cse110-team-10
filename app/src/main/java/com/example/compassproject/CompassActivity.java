@@ -2,10 +2,14 @@ package com.example.compassproject;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,18 +34,20 @@ public class CompassActivity extends AppCompatActivity {
     private double longitude;
     private int radius;
 
-    //radius of compass in miles, default is 10 miles
-    private int zoomRadius = 10;
     private ImageView compass;
     private TextView gpsIndicator;
     private TextView timeIndicator;
+    SharedPreferences preferences;
 
+    int zoomLevel;
     CompassViewModel viewModel;
 
     ArrayList<LiveData<Location>> locationArray;
 
     ConstraintLayout.LayoutParams north_lp, south_lp, east_lp, west_lp;
+    ConstraintLayout.LayoutParams zoom_1_lp, zoom_2_lp, zoom_3_lp;
     TextView north, south, east, west;
+    ImageView zoom_1, zoom_2, zoom_3;
 
     LocationService ls;
 
@@ -54,6 +60,10 @@ public class CompassActivity extends AppCompatActivity {
 
         // Create View Model
         viewModel = setupViewModel();
+        preferences = getSharedPreferences("ZoomData", Context.MODE_PRIVATE);
+
+        ZoomService zoomService = new ZoomService(this);
+        zoomLevel = zoomService.getZoomLevel();
 
         // Create location and orientation services
         ls = LocationService.singleton(this);
@@ -97,6 +107,40 @@ public class CompassActivity extends AppCompatActivity {
                 compass.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+
+        Button zoomInButton = findViewById(R.id.zoom_in_btn);
+        Button zoomOutButton = findViewById(R.id.zoom_out_btn);
+        zoomInButton.setOnClickListener(v -> {
+            zoomService.zoomIn();
+            zoomLevel = zoomService.getZoomLevel();
+            updateZoomButtonState();
+            Log.d("Zoom Level", " "+ zoomLevel);
+            updateZoomCircles();
+            updateAllFriendLocations();
+        });
+        zoomOutButton.setOnClickListener(v -> {
+            zoomService.zoomOut();
+            zoomLevel = zoomService.getZoomLevel();
+            updateZoomButtonState();
+            Log.d("Zoom Level", " "+ zoomLevel);
+            updateZoomCircles();
+            updateAllFriendLocations();
+        });
+    }
+
+    private void updateZoomButtonState() {
+        Button zoomInButton = findViewById(R.id.zoom_in_btn);
+        Button zoomOutButton = findViewById(R.id.zoom_out_btn);
+        if (zoomLevel == 1) {
+            zoomInButton.setEnabled(false);
+        } else {
+            zoomInButton.setEnabled(true);
+        }
+        if (zoomLevel == 4) {
+            zoomOutButton.setEnabled(false);
+        } else {
+            zoomOutButton.setEnabled(true);
+        }
     }
 
     private void updateGPSStatus(Boolean hasGPS) {
@@ -115,7 +159,6 @@ public class CompassActivity extends AppCompatActivity {
         for(int i = 0; i < locationArray.size(); i++){
             LiveData<Location> currLocLive = locationArray.get(i);
             Location currLoc = currLocLive.getValue();
-
             updateFriendLocations(currLoc);
         }
     }
@@ -140,7 +183,9 @@ public class CompassActivity extends AppCompatActivity {
 
     private void setupUI() {
         setupCardinalAxisLabels();
+        setUpZoomCircles();
         setupFriendLocations();
+        updateZoomButtonState();
     }
 
     private void updateCardinalAxisLabels(){
@@ -188,6 +233,65 @@ public class CompassActivity extends AppCompatActivity {
         radius = compass.getHeight() / 2;
     }
 
+    public void setUpZoomCircles() {
+        zoom_1 = (ImageView) findViewById(R.id.zoom_circle_1);
+        zoom_2 = (ImageView) findViewById(R.id.zoom_circle_2);
+        zoom_3 = (ImageView) findViewById(R.id.zoom_circle_3);
+
+        zoom_1_lp = (ConstraintLayout.LayoutParams) zoom_1.getLayoutParams();
+        zoom_2_lp = (ConstraintLayout.LayoutParams) zoom_2.getLayoutParams();
+        zoom_3_lp = (ConstraintLayout.LayoutParams) zoom_3.getLayoutParams();
+
+        updateZoomCircles();
+    }
+    //
+    public void updateZoomCircles() {
+        int z_radius = radius -64;
+        switch (zoomLevel) {
+            case 1: // at dist 1
+                zoom_1.setVisibility(View.INVISIBLE);
+                zoom_2.setVisibility(View.INVISIBLE);
+                zoom_3.setVisibility(View.INVISIBLE);
+
+                break;
+            case 2: //at dist 1-10
+                zoom_1.setVisibility(View.VISIBLE);
+                zoom_2.setVisibility(View.INVISIBLE);
+                zoom_3.setVisibility(View.INVISIBLE);
+
+                zoom_1_lp.width = (int) Math.ceil(2.0 * z_radius * (1.0/2));
+                zoom_1.setLayoutParams(zoom_1_lp);
+
+                break;
+            case 3: //at dist 10-500
+                zoom_1.setVisibility(View.VISIBLE);
+                zoom_2.setVisibility(View.VISIBLE);
+                zoom_3.setVisibility(View.INVISIBLE);
+
+                zoom_1_lp.width = (int) Math.ceil(2.0 * z_radius * (1.0/3));
+                zoom_1.setLayoutParams(zoom_1_lp);
+
+                zoom_2_lp.width = (int) Math.ceil(2.0 * z_radius * (2.0/3));
+                zoom_2.setLayoutParams(zoom_2_lp);
+                break;
+            case 4: //at dist 500+
+                zoom_1.setVisibility(View.VISIBLE);
+                zoom_2.setVisibility(View.VISIBLE);
+                zoom_3.setVisibility(View.VISIBLE);
+
+                zoom_1_lp.width = (int) Math.ceil(2.0 * z_radius * (1.0/4));
+                zoom_1.setLayoutParams(zoom_1_lp);
+
+                zoom_2_lp.width = (int) Math.ceil(2.0 * z_radius * (1.0/2));
+                zoom_2.setLayoutParams(zoom_2_lp);
+
+                zoom_3_lp.width = (int) Math.ceil(2.0 * z_radius * (3.0/4));
+                zoom_3.setLayoutParams(zoom_3_lp);
+
+                break;
+        }
+    }
+
     private void setupFriendLocations(){
         List<String> friendList = viewModel.getAllFriendUIDs(); // Move to ViewModel
         int numFriends = friendList.size();
@@ -198,8 +302,7 @@ public class CompassActivity extends AppCompatActivity {
             Location currLoc = currLocLive.getValue();
 
             // Create circle in the given angle
-            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc), getDistance(currLoc), zoomRadius, currLoc.label);
-
+            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc), getDistance(currLoc), zoomLevel, currLoc.label);
 
             locMap.put(currLoc.public_code, loc_view);
 
@@ -247,8 +350,9 @@ public class CompassActivity extends AppCompatActivity {
     }
 
     private void updateFriendLocations(Location location) {
+        Log.d("CompassActivity", "updateAllFriendLocations() called");
         // Update circle in the given angle
-        View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomRadius, location.label);
+        View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomLevel, location.label);
         locMap.put(location.public_code, newView);
     }
     /*
@@ -286,15 +390,12 @@ public class CompassActivity extends AppCompatActivity {
         longitude = loc.second.floatValue();
         Log.i("Tag", "USER LOCATION " + latitude + " " + longitude);
     }
-
     public float getLatitude(){
         return (float) latitude;
     }
-
     public float getLongitude(){
         return (float) longitude;
     }
-
     public void onAddFriendsButtonClicked(View view) {
         Intent intent = new Intent(this, AddFriendsActivity.class);
         startActivity(intent);
