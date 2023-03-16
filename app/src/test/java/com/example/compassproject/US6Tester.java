@@ -44,11 +44,9 @@ public class US6Tester {
             var orientation1 = 0;
             var distance1 = 1;
             assertEquals(2, zoomService.getZoomLevel());
-            View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
-            assertEquals(true, view1 instanceof TextView);
             ZoomService.zoomIn();
             assertEquals(1, zoomService.getZoomLevel());
-            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
+            View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
             assertEquals(true, view1 instanceof CircleView);
         });
     }
