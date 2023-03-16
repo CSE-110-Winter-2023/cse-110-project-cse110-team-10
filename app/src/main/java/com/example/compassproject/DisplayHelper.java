@@ -44,7 +44,6 @@ public class DisplayHelper {
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius/2 + diff), degrees);
             cs.applyTo(cl);
 
-            truncateLabels(friendName);
             return friendName;
         }
 
@@ -74,7 +73,6 @@ public class DisplayHelper {
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) radius/4 + diff, degrees);
             cs.applyTo(cl);
 
-            truncateLabels(friendName);
             return friendName;
         } else if (distance < 10) {
             TextView friendName = new TextView(activity);
@@ -86,7 +84,6 @@ public class DisplayHelper {
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius * 3/4) + diff, degrees);
             cs.applyTo(cl);
 
-            truncateLabels(friendName);
             return friendName;
         } else {
             CircleView loc_view = new CircleView(activity);
@@ -115,7 +112,6 @@ public class DisplayHelper {
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) radius/6 + diff, degrees);
             cs.applyTo(cl);
 
-            truncateLabels(friendName);
             return friendName;
         } else if (distance <= 10) {
             TextView friendName = new TextView(activity);
@@ -127,7 +123,6 @@ public class DisplayHelper {
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius*3/6) + diff, degrees);
             cs.applyTo(cl);
 
-            truncateLabels(friendName);
             return friendName;
         } else if (distance < 500) {
             TextView friendName = new TextView(activity);
@@ -139,7 +134,7 @@ public class DisplayHelper {
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius*5/6) + diff, degrees);
             cs.applyTo(cl);
 
-            truncateLabels(friendName);
+
             return friendName;
         } else {
             CircleView loc_view = new CircleView(activity);
@@ -167,7 +162,6 @@ public class DisplayHelper {
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) radius/8 + diff, degrees);
             cs.applyTo(cl);
 
-            truncateLabels(friendName);
             return friendName;
         } else if (distance <= 10) {
             TextView friendName = new TextView(activity);
@@ -178,8 +172,7 @@ public class DisplayHelper {
             cs.clone(cl);
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius*3/8) + diff, degrees);
             cs.applyTo(cl);
-            
-            truncateLabels(friendName);
+
             return friendName;
         } else if (distance <= 500) {
             TextView friendName = new TextView(activity);
@@ -191,7 +184,6 @@ public class DisplayHelper {
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius*5/8) + diff, degrees);
             cs.applyTo(cl);
 
-            truncateLabels(friendName);
             return friendName;
         } else {
             TextView friendName = new TextView(activity);
@@ -203,7 +195,6 @@ public class DisplayHelper {
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius*7/8) + diff, degrees);
             cs.applyTo(cl);
 
-            truncateLabels(friendName);
             return friendName;
         }
     }
@@ -256,9 +247,4 @@ public class DisplayHelper {
         return displaySingleLocation(activity, 1, radius, degrees, distance, 4, friendName, diff);
     }
 
-    private static void truncateLabels(TextView label){
-        label.setEllipsize(TextUtils.TruncateAt.END);
-        label.setSingleLine(true);
-        label.setMaxLines(1);
-    }
 }

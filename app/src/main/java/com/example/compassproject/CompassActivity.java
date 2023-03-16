@@ -413,72 +413,9 @@ public class CompassActivity extends AppCompatActivity {
             // Update circle in the given angle
             View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomLevel, location.label, radiusDiffList.get(location.public_code));
             locMap.put(location.public_code, newView);
-            handleAllOverlappingViews(location);
         }
         catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    public boolean viewsOverlap(TextView v1, TextView v2){
-
-        Rect rect1 = new Rect(v1.getLeft(), v1.getTop(), v1.getRight(), v1.getBottom());
-        Rect rect2 = new Rect(v2.getLeft(), v2.getTop(), v2.getRight(), v2.getBottom());
-
-        v1.getGlobalVisibleRect(rect1);
-        Log.i("FFFF", rect1.left + " " + rect1.right);
-        //Log.i("AHH", v1.getText().toString() + " " + v1.getX() + " " + v1.getY() + " " + v1.getLeft() + " " + v1.getTop() + " " +  v1.getRight() + " " + v1.getBottom());
-        //Log.i("AHH", v2.getText().toString() + " " + v1.getX() + " " + v1.getY() + " " + v2.getLeft() + " " + v2.getTop() + " " +  v2.getRight() + " " + v2.getBottom());
-        return rect1.intersect(rect2) || rect2.intersect(rect1);
-    }
-
-    public void handleOverlappingViews(TextView v1, TextView v2){
-
-        if(viewsOverlap(v1, v2)){
-            Rect rect1 = new Rect(v1.getLeft(), v1.getTop(), v1.getRight(), v1.getBottom());
-            Rect rect2 = new Rect(v2.getLeft(), v2.getTop(), v2.getRight(), v2.getBottom());
-
-            // Truncate v1
-            if(v1.getLeft() < v2.getLeft()){
-                var maxWidth = v2.getLeft()-v1.getLeft();
-                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(1, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-                v1.setLayoutParams(params);
-                //v1.setWidth(maxWidth);
-            }
-            // Truncate v2
-            else{
-                var maxWidth = v1.getLeft() - v2.getLeft();
-                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(1, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-                v2.setLayoutParams(params);
-
-            }
-        }
-    }
-
-    public void handleAllOverlappingViews(Location loc){
-        String publicCode = loc.public_code;
-        View view = locMap.get(publicCode);
-        // Don't run if
-        if(view instanceof CircleView){
-            return;
-        }
-
-        for(int i = 0; i < locationArray.size(); i++){
-            String currPublicCode = locationArray.get(i).getValue().public_code;
-
-            // Skip if its the same view
-            if(publicCode.equals(currPublicCode)){
-                continue;
-            }
-
-            View currView = locMap.get(currPublicCode);
-
-            // Skip if its a CircleView
-            if(currView instanceof CircleView){
-                continue;
-            }
-
-            handleOverlappingViews((TextView) view, (TextView) currView);
         }
     }
 
