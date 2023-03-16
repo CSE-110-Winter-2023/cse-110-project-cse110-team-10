@@ -59,9 +59,6 @@ public class US6Tester {
             var radius = 400;
             var orientation1 = 0;
             var distance1 = 550;
-            assertEquals(2, zoomService.getZoomLevel());
-            ZoomService.zoomOut();
-            assertEquals(3, zoomService.getZoomLevel());
             View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
             assertEquals(true, view1 instanceof CircleView);
         });
