@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,15 +25,22 @@ import org.robolectric.shadows.ShadowApplication;
 public class US6Tester {
 
     ZoomService zoomService;
+    Context context;
 
     @Before
     public void setup() {
-        Context context = ApplicationProvider.getApplicationContext();
+        context = ApplicationProvider.getApplicationContext();
         SharedPreferences preferences = context.getSharedPreferences("ZoomData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("zoom_level", 2);
         editor.apply();
         zoomService = new ZoomService(context);
+        FriendEntryDatabase.getSingleton(context);
+    }
+
+    @After
+    public void cleanUp(){
+        FriendEntryDatabase.getSingleton(context).close();
     }
 
     @Test
