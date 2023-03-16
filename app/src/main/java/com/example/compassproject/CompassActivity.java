@@ -164,7 +164,7 @@ public class CompassActivity extends AppCompatActivity {
         }
     }
     // Update coordinates both locally and remotely
-    private void updateCoordinates(Pair<Double, Double> location) {
+    public void updateCoordinates(Pair<Double, Double> location) {
         updateCoordinatesLocal(location);
         updateCoordinatesRemote(location);
     }
@@ -176,7 +176,9 @@ public class CompassActivity extends AppCompatActivity {
     }
 
     private void updateCoordinatesRemote(Pair<Double, Double> location){
-        viewModel.updateCoordinatesRemote(location);
+
+        UserInfo u1 = new UserInfo(getSharedPreferences(getString(R.string.saveUserInfo), MODE_PRIVATE));
+        viewModel.updateCoordinatesRemote(location, u1);
     }
     private CompassViewModel setupViewModel() {
         return new ViewModelProvider(this).get(CompassViewModel.class);

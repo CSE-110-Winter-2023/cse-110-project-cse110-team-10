@@ -16,6 +16,7 @@
     <string name="add_friend">Add Friend</string>
     <string name="enter_name">Enter Name</string>
     <string name="enter_your_name">Enter your name</string>
+    <string name="your_uid">Your UID</string>
 
 
 </resources>
