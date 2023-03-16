@@ -11,6 +11,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -413,7 +415,10 @@ public class CompassActivity extends AppCompatActivity {
             // Update circle in the given angle
             View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomLevel, location.label, radiusDiffList.get(location.public_code));
             locMap.put(location.public_code, newView);
-            handleAllOverlappingViews(location);
+            var handler = new Handler(Looper.getMainLooper());
+            handler.post(() -> {
+                handleAllOverlappingViews(location);
+            });
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -424,11 +429,6 @@ public class CompassActivity extends AppCompatActivity {
 
         Rect rect1 = new Rect(v1.getLeft(), v1.getTop(), v1.getRight(), v1.getBottom());
         Rect rect2 = new Rect(v2.getLeft(), v2.getTop(), v2.getRight(), v2.getBottom());
-
-        v1.getGlobalVisibleRect(rect1);
-        Log.i("FFFF", rect1.left + " " + rect1.right);
-        //Log.i("AHH", v1.getText().toString() + " " + v1.getX() + " " + v1.getY() + " " + v1.getLeft() + " " + v1.getTop() + " " +  v1.getRight() + " " + v1.getBottom());
-        //Log.i("AHH", v2.getText().toString() + " " + v1.getX() + " " + v1.getY() + " " + v2.getLeft() + " " + v2.getTop() + " " +  v2.getRight() + " " + v2.getBottom());
         return rect1.intersect(rect2) || rect2.intersect(rect1);
     }
 
@@ -439,18 +439,14 @@ public class CompassActivity extends AppCompatActivity {
             Rect rect2 = new Rect(v2.getLeft(), v2.getTop(), v2.getRight(), v2.getBottom());
 
             // Truncate v1
-            if(v1.getLeft() < v2.getLeft()){
+            if(rect1.left < rect2.left){
                 var maxWidth = v2.getLeft()-v1.getLeft();
-                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(1, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-                v1.setLayoutParams(params);
-                //v1.setWidth(maxWidth);
+                v1.setWidth(maxWidth-20);
             }
             // Truncate v2
             else{
                 var maxWidth = v1.getLeft() - v2.getLeft();
-                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(1, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-                v2.setLayoutParams(params);
-
+                v2.setWidth(maxWidth-20);
             }
         }
     }
@@ -474,7 +470,7 @@ public class CompassActivity extends AppCompatActivity {
             View currView = locMap.get(currPublicCode);
 
             // Skip if its a CircleView
-            if(currView instanceof CircleView){
+            if(!(currView instanceof TextView)){
                 continue;
             }
 
