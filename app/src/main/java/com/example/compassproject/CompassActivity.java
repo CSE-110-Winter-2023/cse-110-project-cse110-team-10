@@ -1,24 +1,23 @@
 package com.example.compassproject;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.LiveData;
-
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import androidx.core.util.Pair;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.util.Pair;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.compassproject.ViewModel.CompassViewModel;
@@ -27,7 +26,6 @@ import com.example.compassproject.model.Location;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 public class CompassActivity extends AppCompatActivity {
     private HashMap<String, View> locMap;
@@ -38,6 +36,8 @@ public class CompassActivity extends AppCompatActivity {
     private int radius;
 
     private ImageView compass;
+    private TextView gpsIndicator;
+    private TextView timeIndicator;
     SharedPreferences preferences;
 
     int zoomLevel;
@@ -49,6 +49,10 @@ public class CompassActivity extends AppCompatActivity {
     ConstraintLayout.LayoutParams zoom_1_lp, zoom_2_lp, zoom_3_lp;
     TextView north, south, east, west;
     ImageView zoom_1, zoom_2, zoom_3;
+
+    LocationService ls;
+
+    boolean hasGPSFix;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,13 +67,17 @@ public class CompassActivity extends AppCompatActivity {
         zoomLevel = zoomService.getZoomLevel();
 
         // Create location and orientation services
-        LocationService ls = LocationService.singleton(this);
+        ls = LocationService.singleton(this);
         this.reobserveLocation();
 
         OrientationService os = OrientationService.singleton(this);
         // Create map and array
         locMap = new HashMap<>();
         locationArray = new ArrayList<>();
+
+        // Save GPS Indicator
+        gpsIndicator = findViewById(R.id.statusIndicator);
+        timeIndicator = findViewById(R.id.timeIndicator);
 
         // Make sure compass has been set up on UI
         compass = (ImageView) findViewById(R.id.compass_face);
@@ -90,6 +98,11 @@ public class CompassActivity extends AppCompatActivity {
                     updateOrientation(orientation);
                     updateCardinalAxisLabels();
                     updateAllFriendLocations();
+
+                });
+
+                ls.getGPSFix().observe(CompassActivity.this, hasGPS ->{
+                    updateGPSStatus(hasGPS);
                 });
 
                 compass.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -129,6 +142,17 @@ public class CompassActivity extends AppCompatActivity {
         } else {
             zoomOutButton.setEnabled(true);
         }
+    }
+
+    private void updateGPSStatus(Boolean hasGPS) {
+        if(hasGPS){
+            setGPSStatusTrue();
+        }
+        else{
+            setSetGPSStatusFalse(ls.getElapsedTime());
+        }
+
+        hasGPSFix = hasGPS;
     }
 
     public void updateAllFriendLocations(){
@@ -352,6 +376,15 @@ public class CompassActivity extends AppCompatActivity {
         locationData.observe(this, this::onLocationChanged);
     }
 
+    public void reobserveGPSFix() {
+        var locationData = LocationService.singleton(this).getGPSFix();
+        locationData.observe(this, this::updateGPSStatus);
+    }
+
+    private void onGPSFixChanged(Boolean aBoolean) {
+        hasGPSFix = aBoolean;
+    }
+
     private void onLocationChanged(Pair<Double, Double> loc) {
 
         latitude = loc.first.floatValue();
@@ -367,5 +400,15 @@ public class CompassActivity extends AppCompatActivity {
     public void onAddFriendsButtonClicked(View view) {
         Intent intent = new Intent(this, AddFriendsActivity.class);
         startActivity(intent);
+    }
+
+    public void setGPSStatusTrue(){
+        gpsIndicator.setTextColor(Color.GREEN);
+        timeIndicator.setText("Live");
+    }
+
+    public void setSetGPSStatusFalse(long time){
+        gpsIndicator.setTextColor(Color.RED);
+        timeIndicator.setText(Utilities.formatElapsedTime(time));
     }
 }

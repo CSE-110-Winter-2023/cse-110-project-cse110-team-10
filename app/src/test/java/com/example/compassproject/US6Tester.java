@@ -59,6 +59,7 @@ public class US6Tester {
             assertEquals(true, view1 instanceof CircleView);
             ((ViewGroup) view1.getParent()).removeView(view1);
         });
+        scenario.close();
     }
     @Test
     public void test500PlusDistance(){
@@ -73,5 +74,6 @@ public class US6Tester {
             assertEquals(true, view1 instanceof CircleView);
             ((ViewGroup) view1.getParent()).removeView(view1);
         });
+        scenario.close();
     }
 }
