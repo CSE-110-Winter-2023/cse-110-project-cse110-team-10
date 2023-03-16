@@ -417,11 +417,82 @@ public class CompassActivity extends AppCompatActivity {
             // Update circle in the given angle
             View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location) - radiusDiffList.get(location.public_code), zoomLevel, location.label);
             locMap.put(location.public_code, newView);
+            handleAllOverlappingViews(location);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public boolean viewsOverlap(TextView v1, TextView v2){
+        int[] firstPosition = new int[2];
+        int[] secondPosition = new int[2];
+
+        v1.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        v1.getLocationOnScreen(firstPosition);
+        v2.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        v2.getLocationOnScreen(secondPosition);
+
+        return firstPosition[0] < secondPosition[0] + v2.getMeasuredWidth()
+                && firstPosition[0] + v1.getMeasuredWidth() > secondPosition[0]
+                && firstPosition[1] < secondPosition[1] + v2.getMeasuredHeight()
+                && firstPosition[1] + v1.getMeasuredHeight() > secondPosition[1];
+    }
+
+    public void handleOverlappingViews(TextView v1, TextView v2){
+        v1.setWidth(Integer.MAX_VALUE);
+        v2.setWidth(Integer.MAX_VALUE);
+
+        if(viewsOverlap(v1, v2)){
+            int[] firstPosition = new int[2];
+            int[] secondPosition = new int[2];
+
+            v1.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            v1.getLocationOnScreen(firstPosition);
+            v2.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            v2.getLocationOnScreen(secondPosition);
+
+            // Truncate v1
+            if(firstPosition[0] < secondPosition[0]){
+                var maxWidth = secondPosition[0] - firstPosition[0];
+                v1.setMaxWidth(maxWidth);
+            }
+            // Truncate v2
+            else{
+                var maxWidth = firstPosition[0] - secondPosition[0];
+                v2.setMaxWidth(maxWidth);
+            }
+        }
+    }
+
+    public void handleAllOverlappingViews(Location loc){
+        String publicCode = loc.public_code;
+        View view = locMap.get(publicCode);
+
+        // Don't run if
+        if(view instanceof CircleView){
+            return;
+        }
+
+        for(int i = 0; i < locationArray.size(); i++){
+            String currPublicCode = locationArray.get(i).getValue().public_code;
+
+            // Skip if its the same view
+            if(publicCode.equals(currPublicCode)){
+                continue;
+            }
+
+            View currView = locMap.get(currPublicCode);
+
+            // Skip if its a CircleView
+            if(view instanceof CircleView){
+                continue;
+            }
+
+            handleOverlappingViews((TextView) view, (TextView) currView);
+        }
+    }
+
     /*
     These are for server testing only
      */

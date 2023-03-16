@@ -1,7 +1,9 @@
 package com.example.compassproject;
 
 
+import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -37,11 +39,14 @@ public class DisplayHelper {
             double distancePercentOfMax = distance * radius;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
+
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) distancePercentOfMax, degrees);
             cs.applyTo(cl);
+
+            truncateLabels(friendName);
             return friendName;
         }
 
@@ -66,21 +71,27 @@ public class DisplayHelper {
             double distancePercentOfMax = distance * maxDistance;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
+
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) distancePercentOfMax, degrees);
             cs.applyTo(cl);
+
+            truncateLabels(friendName);
             return friendName;
         } else if (distance < 10) {
             double circleRad = (distance - 1) / 9 * (radius - radius / 2) + radius / 2;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
+
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
             cs.applyTo(cl);
+
+            truncateLabels(friendName);
             return friendName;
         } else {
             CircleView loc_view = new CircleView(activity);
@@ -104,31 +115,40 @@ public class DisplayHelper {
             double distancePercentOfMax = distance * maxDistance;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
+
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) distancePercentOfMax, degrees);
             cs.applyTo(cl);
+
+            truncateLabels(friendName);
             return friendName;
         } else if (distance <= 10) {
             double circleRad = (distance - 1) / 9 * (r2 - r1) + r1;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
+
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
             cs.applyTo(cl);
+
+            truncateLabels(friendName);
             return friendName;
         } else if (distance < 500) {
             double circleRad = (distance - 10) / 490 * (radius - r2) + r2;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
+
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
             cs.applyTo(cl);
+
+            truncateLabels(friendName);
             return friendName;
         } else {
             CircleView loc_view = new CircleView(activity);
@@ -153,41 +173,53 @@ public class DisplayHelper {
             double distancePercentOfMax = distance * maxDistance;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
+
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) distancePercentOfMax, degrees);
             cs.applyTo(cl);
+
+            truncateLabels(friendName);
             return friendName;
         } else if (distance <= 10) {
             double circleRad = (distance - 1) / 9 * (r2 - r1) + r1;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
+
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
             cs.applyTo(cl);
+
+            truncateLabels(friendName);
             return friendName;
         } else if (distance <= 500) {
             double circleRad = (distance - 10) / 490 * (r3 - r2) + r2;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
+
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
             cs.applyTo(cl);
+
+            truncateLabels(friendName);
             return friendName;
         } else {
             double circleRad = radius * 7/8;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
+
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
             cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
             cs.applyTo(cl);
+
+            truncateLabels(friendName);
             return friendName;
         }
     }
@@ -238,5 +270,11 @@ public class DisplayHelper {
         ConstraintSet cs = new ConstraintSet();
         cl.removeView(loc_view);
         return displaySingleLocation(activity, 1, radius, degrees, distance, 4, friendName);
+    }
+
+    private static void truncateLabels(TextView label){
+        label.setEllipsize(TextUtils.TruncateAt.END);
+        label.setSingleLine(true);
+        label.setMaxLines(1);
     }
 }
