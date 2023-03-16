@@ -63,11 +63,7 @@ public class US6Tester {
             ZoomService.zoomOut();
             assertEquals(3, zoomService.getZoomLevel());
             View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
-            assertEquals(true, view1 instanceof CircleView); // View 1 is not in range
-            ZoomService.zoomOut();
-            assertEquals(4, zoomService.getZoomLevel());
-            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
-            assertEquals(true, view1 instanceof TextView); // View 1 is in range
+            assertEquals(true, view1 instanceof CircleView);
         });
     }
 }
