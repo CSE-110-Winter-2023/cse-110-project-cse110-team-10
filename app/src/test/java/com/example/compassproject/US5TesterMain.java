@@ -59,6 +59,7 @@ public class US5TesterMain {
             assertEquals(Color.GREEN, gpsIndicator.getCurrentTextColor());
             assertEquals("Live", timeIndicator.getText());
         });
+        scenario.close();
     }
 
     @Test
@@ -84,6 +85,7 @@ public class US5TesterMain {
             assertEquals(Color.RED, gpsIndicator.getCurrentTextColor());
             assertEquals("2m", timeIndicator.getText());
         });
+        scenario.close();
     }
 
 }
