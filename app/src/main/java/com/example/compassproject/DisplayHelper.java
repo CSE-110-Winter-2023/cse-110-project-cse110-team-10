@@ -10,40 +10,38 @@ import androidx.constraintlayout.widget.ConstraintSet;
 public class DisplayHelper {
 
     //final static int LOCATION_VIEW_BASE_ID = 1;
-
-    public static View displaySingleLocation(CompassActivity activity, int loc_id, int radius, float degrees, double distance, int zoomLevel, String name) {
+    public static View displaySingleLocation(CompassActivity activity, int loc_id, int radius, float degrees, double distance, int zoomLevel, String name, int diff) {
         if (zoomLevel == 1) {
-            return displaySingleLocationZoomOne(activity, loc_id, radius, degrees, distance, name);
+            return displaySingleLocationZoomOne(activity, loc_id, radius, degrees, distance, name, diff);
         }
 
         if (zoomLevel == 2) {
-            return displaySingleLocationZoomTwo(activity, loc_id, radius, degrees, distance, name);
+            return displaySingleLocationZoomTwo(activity, loc_id, radius, degrees, distance, name, diff);
         }
 
         if (zoomLevel == 3) {
-            return displaySingleLocationZoomThree(activity, loc_id, radius, degrees, distance, name);
+            return displaySingleLocationZoomThree(activity, loc_id, radius, degrees, distance, name, diff);
         }
 
         if (zoomLevel == 4) {
-            return displaySingleLocationZoomFour(activity, loc_id, radius, degrees, distance, name);
+            return displaySingleLocationZoomFour(activity, loc_id, radius, degrees, distance, name, diff);
         }
 
         return null;
     }
 
-    public static View displaySingleLocationZoomOne(CompassActivity activity, int loc_id, int radius, float degrees, double distance, String name) {
+    public static View displaySingleLocationZoomOne(CompassActivity activity, int loc_id, int radius, float degrees, double distance, String name, int diff) {
         ConstraintLayout cl = activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
 
         if (distance < 1) {
-            double distancePercentOfMax = distance * radius;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
 
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
-            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) distancePercentOfMax, degrees);
+            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius/2 + diff), degrees);
             cs.applyTo(cl);
 
             truncateLabels(friendName);
@@ -62,33 +60,30 @@ public class DisplayHelper {
         }
     }
 
-    public static View displaySingleLocationZoomTwo(CompassActivity activity, int loc_id, int radius, float degrees, double distance, String name) {
+    public static View displaySingleLocationZoomTwo(CompassActivity activity, int loc_id, int radius, float degrees, double distance, String name, int diff) {
         ConstraintLayout cl = activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
 
         if (distance <= 1) {
-            double maxDistance = radius / 2;
-            double distancePercentOfMax = distance * maxDistance;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
 
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
-            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) distancePercentOfMax, degrees);
+            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) radius/4 + diff, degrees);
             cs.applyTo(cl);
 
             truncateLabels(friendName);
             return friendName;
         } else if (distance < 10) {
-            double circleRad = (distance - 1) / 9 * (radius - radius / 2) + radius / 2;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
 
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
-            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
+            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius * 3/4) + diff, degrees);
             cs.applyTo(cl);
 
             truncateLabels(friendName);
@@ -104,48 +99,44 @@ public class DisplayHelper {
         }
     }
 
-    public static View displaySingleLocationZoomThree(CompassActivity activity, int loc_id, int radius, float degrees, double distance, String name) {
+    public static View displaySingleLocationZoomThree(CompassActivity activity, int loc_id, int radius, float degrees, double distance, String name, int diff) {
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
         double r1 = radius / 3;
         double r2 = radius * 2 / 3;
 
         if (distance <= 1) {
-            double maxDistance = radius / 3;
-            double distancePercentOfMax = distance * maxDistance;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
 
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
-            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) distancePercentOfMax, degrees);
+            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) radius/6 + diff, degrees);
             cs.applyTo(cl);
 
             truncateLabels(friendName);
             return friendName;
         } else if (distance <= 10) {
-            double circleRad = (distance - 1) / 9 * (r2 - r1) + r1;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
 
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
-            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
+            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius*3/6) + diff, degrees);
             cs.applyTo(cl);
 
             truncateLabels(friendName);
             return friendName;
         } else if (distance < 500) {
-            double circleRad = (distance - 10) / 490 * (radius - r2) + r2;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
 
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
-            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
+            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius*5/6) + diff, degrees);
             cs.applyTo(cl);
 
             truncateLabels(friendName);
@@ -161,62 +152,55 @@ public class DisplayHelper {
         }
     }
 
-    public static View displaySingleLocationZoomFour(CompassActivity activity, int loc_id, int radius, float degrees, double distance, String name) {
+    public static View displaySingleLocationZoomFour(CompassActivity activity, int loc_id, int radius, float degrees, double distance, String name, int diff) {
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
-        double r1 = radius / 4;
-        double r2 = radius / 2;
-        double r3 = radius * 3/4;
 
         if (distance <= 1) {
             double maxDistance = radius / 4;
-            double distancePercentOfMax = distance * maxDistance;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
 
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
-            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) distancePercentOfMax, degrees);
+            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) radius/8 + diff, degrees);
             cs.applyTo(cl);
 
             truncateLabels(friendName);
             return friendName;
         } else if (distance <= 10) {
-            double circleRad = (distance - 1) / 9 * (r2 - r1) + r1;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
 
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
-            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
+            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius*3/8) + diff, degrees);
             cs.applyTo(cl);
-
+            
             truncateLabels(friendName);
             return friendName;
         } else if (distance <= 500) {
-            double circleRad = (distance - 10) / 490 * (r3 - r2) + r2;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
 
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
-            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
+            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius*5/8) + diff, degrees);
             cs.applyTo(cl);
 
             truncateLabels(friendName);
             return friendName;
         } else {
-            double circleRad = radius * 7/8;
             TextView friendName = new TextView(activity);
             friendName.setText(name);
 
             cl.addView(friendName, loc_id);
             friendName.setId(View.generateViewId());
             cs.clone(cl);
-            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) circleRad, degrees);
+            cs.constrainCircle(friendName.getId(), R.id.compass_face, (int) (radius*7/8) + diff, degrees);
             cs.applyTo(cl);
 
             truncateLabels(friendName);
@@ -224,52 +208,52 @@ public class DisplayHelper {
         }
     }
 
-    public static View updateLocation(CompassActivity activity, View loc_view, int radius, float degrees, double distance, int zoomLevel, String friendName) {
+    public static View updateLocation(CompassActivity activity, View loc_view, int radius, float degrees, double distance, int zoomLevel, String friendName, int diff) {
         double maxDistance = 0;
         if (zoomLevel == 1) {
-            return updateLocationOne(activity, loc_view, radius, degrees, distance, friendName);
+            return updateLocationOne(activity, loc_view, radius, degrees, distance, friendName, diff);
         }
 
         if (zoomLevel == 2) {
-            return updateLocationTwo(activity, loc_view, radius, degrees, distance, friendName);
+            return updateLocationTwo(activity, loc_view, radius, degrees, distance, friendName, diff);
         }
 
         if (zoomLevel == 3) {
-            return updateLocationThree(activity, loc_view, radius, degrees, distance, friendName);
+            return updateLocationThree(activity, loc_view, radius, degrees, distance, friendName, diff);
         }
 
         if (zoomLevel == 4) {
-            return updateLocationFour(activity, loc_view, radius, degrees, distance, friendName);
+            return updateLocationFour(activity, loc_view, radius, degrees, distance, friendName, diff);
         }
 
         return null;
     }
 
-    public static View updateLocationOne(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName) {
+    public static View updateLocationOne(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName, int diff) {
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
         cl.removeView(loc_view);
-        return displaySingleLocation(activity, 1, radius, degrees, distance, 1, friendName);
+        return displaySingleLocation(activity, 1, radius, degrees, distance, 1, friendName, diff);
     }
 
-    public static View updateLocationTwo(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName) {
+    public static View updateLocationTwo(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName, int diff) {
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
         cl.removeView(loc_view);
-        return displaySingleLocation(activity, 1, radius, degrees, distance, 2, friendName);
+        return displaySingleLocation(activity, 1, radius, degrees, distance, 2, friendName, diff);
     }
-    public static View updateLocationThree(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName) {
+    public static View updateLocationThree(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName, int diff) {
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
         cl.removeView(loc_view);
-        return displaySingleLocation(activity, 1, radius, degrees, distance, 3, friendName);
+        return displaySingleLocation(activity, 1, radius, degrees, distance, 3, friendName, diff);
     }
 
-    public static View updateLocationFour(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName) {
+    public static View updateLocationFour(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName, int diff) {
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
         cl.removeView(loc_view);
-        return displaySingleLocation(activity, 1, radius, degrees, distance, 4, friendName);
+        return displaySingleLocation(activity, 1, radius, degrees, distance, 4, friendName, diff);
     }
 
     private static void truncateLabels(TextView label){

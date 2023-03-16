@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -17,6 +18,7 @@ import androidx.core.util.Pair;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.lifecycle.ViewModelProvider;
@@ -283,7 +285,7 @@ public class CompassActivity extends AppCompatActivity {
             Location currLoc = currLocLive.getValue();
 
             // Create circle in the given angle
-            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc) , getDistance(currLoc), zoomLevel, currLoc.label);
+            View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc) , getDistance(currLoc), zoomLevel, currLoc.label, 0);
 
             locMap.put(currLoc.public_code, loc_view);
 
@@ -339,24 +341,18 @@ public class CompassActivity extends AppCompatActivity {
                 double tempCurrLocDistance = getDistance(tempCurrLoc);
                 int tempCurrZoomLevel = zoomLevel(tempCurrLocDistance);
 
-                if(tempCurrZoomLevel == currZoomLevel && Math.abs(tempCurrLocDegree - currLocDegree) <= 6 )
+                if(tempCurrZoomLevel == currZoomLevel && Math.abs(tempCurrLocDegree - currLocDegree) <= 12 )
                 {
-                    //TODO mess around with radius diff value
-                    radiusDiffList.replace(key, -120);
-                    radiusDiffList.replace(tempKey, 120);
+                    radiusDiffList.replace(key, -30);
+                    radiusDiffList.replace(tempKey, 30);
 
                     break;
                 }
-
             }
-
-
         }
-
         return radiusDiffList;
     }
 
-    //TODO make sure inclusion is correct
     //calculate which zoom level the location is on
     private int zoomLevel(double distance)
     {
@@ -415,7 +411,7 @@ public class CompassActivity extends AppCompatActivity {
             Map<String, Integer> radiusDiffList = future.get();
             Log.d("CompassActivity", "updateAllFriendLocations() called");
             // Update circle in the given angle
-            View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location) - radiusDiffList.get(location.public_code), zoomLevel, location.label);
+            View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomLevel, location.label, radiusDiffList.get(location.public_code));
             locMap.put(location.public_code, newView);
             handleAllOverlappingViews(location);
         }
@@ -425,42 +421,36 @@ public class CompassActivity extends AppCompatActivity {
     }
 
     public boolean viewsOverlap(TextView v1, TextView v2){
-        int[] firstPosition = new int[2];
-        int[] secondPosition = new int[2];
 
-        v1.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        v1.getLocationOnScreen(firstPosition);
-        v2.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        v2.getLocationOnScreen(secondPosition);
+        Rect rect1 = new Rect(v1.getLeft(), v1.getTop(), v1.getRight(), v1.getBottom());
+        Rect rect2 = new Rect(v2.getLeft(), v2.getTop(), v2.getRight(), v2.getBottom());
 
-        return firstPosition[0] < secondPosition[0] + v2.getMeasuredWidth()
-                && firstPosition[0] + v1.getMeasuredWidth() > secondPosition[0]
-                && firstPosition[1] < secondPosition[1] + v2.getMeasuredHeight()
-                && firstPosition[1] + v1.getMeasuredHeight() > secondPosition[1];
+        v1.getGlobalVisibleRect(rect1);
+        Log.i("FFFF", rect1.left + " " + rect1.right);
+        //Log.i("AHH", v1.getText().toString() + " " + v1.getX() + " " + v1.getY() + " " + v1.getLeft() + " " + v1.getTop() + " " +  v1.getRight() + " " + v1.getBottom());
+        //Log.i("AHH", v2.getText().toString() + " " + v1.getX() + " " + v1.getY() + " " + v2.getLeft() + " " + v2.getTop() + " " +  v2.getRight() + " " + v2.getBottom());
+        return rect1.intersect(rect2) || rect2.intersect(rect1);
     }
 
     public void handleOverlappingViews(TextView v1, TextView v2){
-        v1.setWidth(Integer.MAX_VALUE);
-        v2.setWidth(Integer.MAX_VALUE);
 
         if(viewsOverlap(v1, v2)){
-            int[] firstPosition = new int[2];
-            int[] secondPosition = new int[2];
-
-            v1.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            v1.getLocationOnScreen(firstPosition);
-            v2.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            v2.getLocationOnScreen(secondPosition);
+            Rect rect1 = new Rect(v1.getLeft(), v1.getTop(), v1.getRight(), v1.getBottom());
+            Rect rect2 = new Rect(v2.getLeft(), v2.getTop(), v2.getRight(), v2.getBottom());
 
             // Truncate v1
-            if(firstPosition[0] < secondPosition[0]){
-                var maxWidth = secondPosition[0] - firstPosition[0];
-                v1.setMaxWidth(maxWidth);
+            if(v1.getLeft() < v2.getLeft()){
+                var maxWidth = v2.getLeft()-v1.getLeft();
+                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(1, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+                v1.setLayoutParams(params);
+                //v1.setWidth(maxWidth);
             }
             // Truncate v2
             else{
-                var maxWidth = firstPosition[0] - secondPosition[0];
-                v2.setMaxWidth(maxWidth);
+                var maxWidth = v1.getLeft() - v2.getLeft();
+                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(1, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+                v2.setLayoutParams(params);
+
             }
         }
     }
@@ -468,7 +458,6 @@ public class CompassActivity extends AppCompatActivity {
     public void handleAllOverlappingViews(Location loc){
         String publicCode = loc.public_code;
         View view = locMap.get(publicCode);
-
         // Don't run if
         if(view instanceof CircleView){
             return;
@@ -485,7 +474,7 @@ public class CompassActivity extends AppCompatActivity {
             View currView = locMap.get(currPublicCode);
 
             // Skip if its a CircleView
-            if(view instanceof CircleView){
+            if(currView instanceof CircleView){
                 continue;
             }
 
