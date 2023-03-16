@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.lifecycle.Lifecycle;
@@ -48,6 +49,7 @@ public class US6Tester {
             assertEquals(1, zoomService.getZoomLevel());
             View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
             assertEquals(true, view1 instanceof CircleView);
+            ((ViewGroup) view1.getParent()).removeView(view1);
         });
     }
     @Test
@@ -61,6 +63,7 @@ public class US6Tester {
             var distance1 = 550;
             View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
             assertEquals(true, view1 instanceof CircleView);
+            ((ViewGroup) view1.getParent()).removeView(view1);
         });
     }
 }
