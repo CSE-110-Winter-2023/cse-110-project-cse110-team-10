@@ -9,7 +9,11 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-//Database class
+/**
+This class is use as Friend Entry Database
+function: makeDataBase - make database for friend entry
+          injectTestDataBase - testDataBase
+ */
 @Database(entities = {FriendEntry.class}, version = 1)
 public abstract class FriendEntryDatabase extends RoomDatabase
 {
@@ -17,7 +21,10 @@ public abstract class FriendEntryDatabase extends RoomDatabase
 
     public abstract FriendEntryDao friendEntryDao();
 
-    // Ensure that there only ever exists one database per context
+    /** Ensure that there only ever exists one database per context
+     * @param context
+     * @return singleton
+     */
     public synchronized static FriendEntryDatabase getSingleton(Context context)
     {
         if(singleton == null)
@@ -28,7 +35,11 @@ public abstract class FriendEntryDatabase extends RoomDatabase
         return singleton;
     }
 
-    //Create Database
+    /**
+        This method is used to make the data base for friend entry
+        @param context - the context to make database
+        @return a database which contains friend entries.
+     */
     private static FriendEntryDatabase makeDatabase(Context context)
     {
         return Room.databaseBuilder(context, FriendEntryDatabase.class, "Friend_Entry.db")
@@ -45,6 +56,10 @@ public abstract class FriendEntryDatabase extends RoomDatabase
                 .build();
     }
 
+    /**
+        This method is used to inject test database
+         @param testDatabase - the database to test
+     */
     @VisibleForTesting
     public static void injectTestDatabase(FriendEntryDatabase testDatabase)
     {

@@ -1,18 +1,28 @@
 package com.example.compassproject;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
-import androidx.core.util.Pair;
-import android.view.View;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+/**
+ * This class is main activity where it handle request permission
+ * from user at runtime to use location, and request internet
+ * permission. It will direct to SetNameActivity or CompassActivity
+ * depends on user decision perform on UI.
+ */
 public class MainActivity extends AppCompatActivity {
+
+    /**
+     * This method is used to request permission to use location,
+     * and permission for internet.
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.
+     *                              <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

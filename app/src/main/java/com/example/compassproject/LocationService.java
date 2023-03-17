@@ -22,6 +22,23 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.Arrays;
 
+/**
+    This class is as a Location Service implement for
+    Location Listener which handles functions as location
+    listener, GPS status.
+    functions   LocationService
+                RegisterLocationListener
+                WithLocationPermission
+                onLocationChanged
+                satelliteStatusChanged
+                unregisterLocationListener
+                getLocation
+                getGPSFix
+                setMockLocationSource
+                setMockGPSFixSource
+                setMockElapsedTime
+                getElapsedTime
+ */
 public class LocationService implements LocationListener {
 
     private static final long GPS_UPDATE_INTERVAL = 1000;
@@ -48,6 +65,11 @@ public class LocationService implements LocationListener {
     long elapsedTime;
     boolean mocking = false;
 
+    /**
+     * This method is locationService constructor
+     * @param activity
+     * @return instance
+     */
     public static LocationService singleton(AppCompatActivity activity) {
         if (instance == null) {
             instance = new LocationService(activity);
@@ -112,6 +134,11 @@ public class LocationService implements LocationListener {
         }
     }
 
+    /**
+     * This method is used to set postValue of locationValue
+     * to latitude and longitude of location
+     * @param location the updated location
+     */
     @Override
     public void onLocationChanged(@NonNull Location location) {
         if (location == null) return;
@@ -122,6 +149,10 @@ public class LocationService implements LocationListener {
         this.locationValue.postValue(new Pair<>(location.getLatitude(), location.getLongitude()));
 
     }
+
+    /**
+     * This method is used to decide when the satellite status change
+     */
     public void satelliteStatusChanged() {
         // if mock is true
         if (!mocking) {
@@ -134,30 +165,58 @@ public class LocationService implements LocationListener {
         }
     }
 
+    /**
+     * This method is used to unregister location listener
+     */
     private void unregisterLocationListener() {
         locationManager.removeUpdates(this);
     }
 
+    /**
+     * This method is used to get location
+     * @return locationValue
+     */
     public LiveData<Pair<Double, Double>> getLocation() {
         return this.locationValue;
     }
 
+    /**
+     * This method is used to get GPSFix
+     * @return isGPSFix
+     */
     public LiveData<Boolean> getGPSFix(){ return this.isGPSFix;}
 
+    /**
+     * This method is used to set mocking for location source
+     * @param mockData
+     */
     public void setMockLocationSource(MutableLiveData<Pair<Double, Double>> mockData) {
         unregisterLocationListener();
         this.locationValue = mockData;
     }
 
+    /**
+     * This method is used to set mocking for GPSFix source
+     * @param mockGPSFixSource
+     */
     public void setMockGPSFixSource(MutableLiveData<Boolean> mockGPSFixSource) {
         unregisterLocationListener();
         this.isGPSFix = mockGPSFixSource;
     }
 
+    /**
+     * This method is used to set mocking for elapsed time
+     * @param time
+     */
     public void setMockElapsedTime(long time){
         elapsedTime = time;
         mocking = true;
     }
+
+    /**
+     * This method is used to get elapsed time
+     * @return elapsedTime
+     */
     public long getElapsedTime(){
         return elapsedTime;
     }
