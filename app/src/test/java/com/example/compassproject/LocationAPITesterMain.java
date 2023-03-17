@@ -28,6 +28,8 @@ public class LocationAPITesterMain {
 
     @Test
     public void testGetAndPutFromServer(){
+        singleTon = LocationAPI.provide();
+        LocationAPI.changeEndpoint("https://socialcompass.goto.ucsd.edu/location");
         Location loc1 = new Location("kgupta", "Team10TestInput", "Kanishk", 32.12, 74.12, true, "2023-02-18T12:00:00Z", "2023-02-18T18:30:00Z");
         singleTon.putLocation(loc1);
         Location loc2 = singleTon.getLocation(loc1.public_code);
@@ -38,6 +40,8 @@ public class LocationAPITesterMain {
 
     @Test
     public void testDelete(){
+        singleTon = LocationAPI.provide();
+        LocationAPI.changeEndpoint("https://socialcompass.goto.ucsd.edu/location");
         Location loc1 = new Location("kgupta", "Team10TestInput", "Kanishk", 32.12, 74.12, true, "2023-02-18T12:00:00Z", "2023-02-18T18:30:00Z");
         singleTon.putLocation(loc1);
         Location loc2 = singleTon.getLocation(loc1.public_code);
