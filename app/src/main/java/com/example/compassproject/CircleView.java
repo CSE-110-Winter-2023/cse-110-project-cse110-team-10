@@ -63,4 +63,12 @@ public class CircleView extends View {
     {
         return this.index;
     }
+
+    public void setColor(int color){
+        this.paint.setColor(color);
+    }
+
+    public int getColor(){
+        return this.paint.getColor();
+    }
 }

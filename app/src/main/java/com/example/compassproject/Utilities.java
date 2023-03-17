@@ -23,5 +23,17 @@ public class Utilities {
         AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
     }
+
+    public static String formatElapsedTime(long time) {
+        if(time > 3600000){
+            return (time)/3600000 + "h";
+        }
+        if(time > 60000){
+            return (time)/60000 + "m";
+        }
+        else{
+            return "";
+        }
+    }
 }
 

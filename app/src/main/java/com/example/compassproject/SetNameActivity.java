@@ -1,5 +1,7 @@
 package com.example.compassproject;
 
+import static java.util.UUID.randomUUID;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -24,6 +26,11 @@ public class SetNameActivity extends AppCompatActivity {
         if(checkNonEmptyName(name_input))
         {
             storeName(name_input);
+
+            generatePrivateCode();
+
+            generateUID(name_input);
+
             Intent intent = new Intent(this,CompassActivity.class);
             startActivity(intent);
         }
@@ -36,15 +43,33 @@ public class SetNameActivity extends AppCompatActivity {
 
     }
 
+    //checks if user inputted a valid name
     private boolean checkNonEmptyName(String name_input)
     {
         return !name_input.equals("");
     }
 
+    //stores the name the user entered
     private void storeName(String name)
     {
         UserInfo u1 = new UserInfo(getSharedPreferences(getString(R.string.saveUserInfo), MODE_PRIVATE));
         u1.setName(name);
+    }
+
+    //generates private code for user
+    private void generatePrivateCode()
+    {
+        String privateCode = randomUUID().toString();
+        UserInfo u1 = new UserInfo(getSharedPreferences(getString(R.string.saveUserInfo), MODE_PRIVATE));
+        u1.setPrivateCode(privateCode);
+    }
+
+    //generates UID for user
+    private void generateUID(String name_input)
+    {
+        String UID = GenerateUID.generateUID(name_input);
+        UserInfo u1 = new UserInfo(getSharedPreferences(getString(R.string.saveUserInfo), MODE_PRIVATE));
+        u1.setUID(UID);
     }
 
 

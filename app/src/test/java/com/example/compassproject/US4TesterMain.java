@@ -69,5 +69,6 @@ public class US4TesterMain {
             assertEquals(true, view1 instanceof TextView); // View 1 is in range
             assertEquals(true, view2 instanceof CircleView); // View 2 is in range
         });
+        scenario.close();
     }
 }

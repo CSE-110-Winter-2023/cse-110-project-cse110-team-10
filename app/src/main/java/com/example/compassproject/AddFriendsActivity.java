@@ -5,7 +5,9 @@ import static com.example.compassproject.CheckValidFriendUID.checkValidFriendUID
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -13,6 +15,8 @@ import android.widget.TextView;
 
 import com.example.compassproject.model.Location;
 import com.example.compassproject.model.LocationAPI;
+
+import org.w3c.dom.Text;
 
 public class AddFriendsActivity extends AppCompatActivity {
 
@@ -25,6 +29,11 @@ public class AddFriendsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friends);
 
+        //set UID display
+        TextView textView = this.findViewById(R.id.your_uid);
+        SharedPreferences preferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
+        UserInfo u1 = new UserInfo(preferences);
+        textView.setText(u1.getUID());
 
         db = FriendEntryDatabase.getSingleton(this);
         friendEntryDao = db.friendEntryDao();

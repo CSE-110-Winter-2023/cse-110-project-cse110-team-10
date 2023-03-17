@@ -225,6 +225,7 @@ public class DisplayHelper {
         ConstraintSet cs = new ConstraintSet();
         cl.removeView(loc_view);
         return displaySingleLocation(activity, 1, radius, degrees, distance, 1, friendName, diff);
+
     }
 
     public static View updateLocationTwo(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName, int diff) {
@@ -232,17 +233,18 @@ public class DisplayHelper {
         ConstraintSet cs = new ConstraintSet();
         cl.removeView(loc_view);
         return displaySingleLocation(activity, 1, radius, degrees, distance, 2, friendName, diff);
+
     }
     public static View updateLocationThree(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName, int diff) {
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
         ConstraintSet cs = new ConstraintSet();
         cl.removeView(loc_view);
         return displaySingleLocation(activity, 1, radius, degrees, distance, 3, friendName, diff);
+
     }
 
     public static View updateLocationFour(CompassActivity activity, View loc_view, int radius, float degrees, double distance, String friendName, int diff) {
         ConstraintLayout cl = (ConstraintLayout) activity.findViewById(R.id.compass_cl);
-        ConstraintSet cs = new ConstraintSet();
         cl.removeView(loc_view);
         return displaySingleLocation(activity, 1, radius, degrees, distance, 4, friendName, diff);
     }
