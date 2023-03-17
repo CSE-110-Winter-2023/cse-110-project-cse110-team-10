@@ -10,14 +10,13 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "friend_entries")
 public class FriendEntry
 {
-    // public fields
-
+    // Public fields
     @NonNull
     @PrimaryKey(autoGenerate = false)
     public String uid;
 
 
-    // constructor
+    // Constructor
     public FriendEntry(@NonNull String uid)
     {
         this.uid = uid;

@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CheckValidFriendUID
 {
+    // Check if friend object has valid UID on server
     public static boolean checkValidFriendUID(FriendEntry friend)
     {
         String friend_uid = friend.uid;

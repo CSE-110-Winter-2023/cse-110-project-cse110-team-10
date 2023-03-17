@@ -65,10 +65,11 @@ public class CompassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compass);
 
-        // Create View Model
+        // Create View Model and SharedPreferences
         viewModel = setupViewModel();
         preferences = getSharedPreferences("ZoomData", Context.MODE_PRIVATE);
 
+        // Create ZoomService and save initial zoom level
         ZoomService zoomService = new ZoomService(this);
         zoomLevel = zoomService.getZoomLevel();
 
@@ -77,11 +78,12 @@ public class CompassActivity extends AppCompatActivity {
         this.reobserveLocation();
 
         OrientationService os = OrientationService.singleton(this);
-        // Create map and array
+
+        // Create location map and array
         locMap = new HashMap<>();
         locationArray = new ArrayList<>();
 
-        // Save GPS Indicator
+        // Save GPS Indicator Views
         gpsIndicator = findViewById(R.id.statusIndicator);
         timeIndicator = findViewById(R.id.timeIndicator);
 
@@ -107,6 +109,7 @@ public class CompassActivity extends AppCompatActivity {
 
                 });
 
+                // When our GPS status changes, update it on the UI
                 ls.getGPSFix().observe(CompassActivity.this, hasGPS ->{
                     updateGPSStatus(hasGPS);
                 });
@@ -115,8 +118,11 @@ public class CompassActivity extends AppCompatActivity {
             }
         });
 
+        // Save button views
         Button zoomInButton = findViewById(R.id.zoom_in_btn);
         Button zoomOutButton = findViewById(R.id.zoom_out_btn);
+
+        // Setup zoom in button
         zoomInButton.setOnClickListener(v -> {
             zoomService.zoomIn();
             zoomLevel = zoomService.getZoomLevel();
@@ -125,6 +131,8 @@ public class CompassActivity extends AppCompatActivity {
             updateZoomCircles();
             updateAllFriendLocations();
         });
+
+        // Setup zoom out button
         zoomOutButton.setOnClickListener(v -> {
             zoomService.zoomOut();
             zoomLevel = zoomService.getZoomLevel();
@@ -135,6 +143,7 @@ public class CompassActivity extends AppCompatActivity {
         });
     }
 
+    // Disable zoom buttons when appropriate
     private void updateZoomButtonState() {
         Button zoomInButton = findViewById(R.id.zoom_in_btn);
         Button zoomOutButton = findViewById(R.id.zoom_out_btn);
@@ -150,6 +159,7 @@ public class CompassActivity extends AppCompatActivity {
         }
     }
 
+    // Update UI based on GPS status
     private void updateGPSStatus(Boolean hasGPS) {
         if(hasGPS){
             setGPSStatusTrue();
@@ -161,6 +171,19 @@ public class CompassActivity extends AppCompatActivity {
         hasGPSFix = hasGPS;
     }
 
+    // Change UI to indicate live GPS connection
+    public void setGPSStatusTrue(){
+        gpsIndicator.setTextColor(Color.GREEN);
+        timeIndicator.setText("Live");
+    }
+
+    // Change UI to indicate lack of GPS connection
+    public void setSetGPSStatusFalse(long time){
+        gpsIndicator.setTextColor(Color.RED);
+        timeIndicator.setText(Utilities.formatElapsedTime(time));
+    }
+
+    // Update the UI with the latest location data for all friends
     public void updateAllFriendLocations(){
         // showing red dots which is saved user locations
         for(int i = 0; i < locationArray.size(); i++){
@@ -169,27 +192,32 @@ public class CompassActivity extends AppCompatActivity {
             updateFriendLocations(currLoc);
         }
     }
+
     // Update coordinates both locally and remotely
     public void updateCoordinates(Pair<Double, Double> location) {
         updateCoordinatesLocal(location);
         updateCoordinatesRemote(location);
     }
 
+    // Update coordinates locally
     private void updateCoordinatesLocal(Pair<Double, Double> location){
         latitude = location.first;
         longitude = location.second;
         Log.i("CURR LOCATION", "(" + latitude + "," + longitude + ")");
     }
 
+    // Update my coordinates on the server
     private void updateCoordinatesRemote(Pair<Double, Double> location){
-
         UserInfo u1 = new UserInfo(getSharedPreferences(getString(R.string.saveUserInfo), MODE_PRIVATE));
         viewModel.updateCoordinatesRemote(location, u1);
     }
+
+    // Set up the view model
     private CompassViewModel setupViewModel() {
         return new ViewModelProvider(this).get(CompassViewModel.class);
     }
 
+    // Set up the UI initially
     private void setupUI() {
         setupCardinalAxisLabels();
         setUpZoomCircles();
@@ -197,8 +225,9 @@ public class CompassActivity extends AppCompatActivity {
         updateZoomButtonState();
     }
 
+    // Update the angle of the cardinal axis labels based on current orientation
     private void updateCardinalAxisLabels(){
-        north_lp.circleAngle = (float) -currOrientation;
+        north_lp.circleAngle = (float) - currOrientation;
         east_lp.circleAngle = (float) (90 - currOrientation);
         south_lp.circleAngle = (float) (180 - currOrientation);
         west_lp.circleAngle = (float) (270 - currOrientation);
@@ -210,6 +239,7 @@ public class CompassActivity extends AppCompatActivity {
         west.setLayoutParams(west_lp);
     }
 
+    // Setup axis labels initially
     private void setupCardinalAxisLabels(){
         // Access UI elements for cardinal directions
         north = (TextView) findViewById(R.id.compass_N);
@@ -237,11 +267,12 @@ public class CompassActivity extends AppCompatActivity {
         west.setLayoutParams(west_lp);
     }
 
-    // Calculate radius
+    // Calculate radius of compass on screen
     private void setRadius(){
         radius = compass.getHeight() / 2;
     }
 
+    // Set up zoom circles to be modified later
     public void setUpZoomCircles() {
         zoom_1 = (ImageView) findViewById(R.id.zoom_circle_1);
         zoom_2 = (ImageView) findViewById(R.id.zoom_circle_2);
@@ -253,7 +284,8 @@ public class CompassActivity extends AppCompatActivity {
 
         updateZoomCircles();
     }
-    //
+
+    // Adapt zoom circles sizes and visibility based on zoom level
     public void updateZoomCircles() {
         int z_radius = radius -64;
         switch (zoomLevel) {
@@ -301,23 +333,24 @@ public class CompassActivity extends AppCompatActivity {
         }
     }
 
+    // Set up circles and labels for friend's location on UI
     private void setupFriendLocations(){
-        List<String> friendList = viewModel.getAllFriendUIDs(); // Move to ViewModel
+        List<String> friendList = viewModel.getAllFriendUIDs();
         int numFriends = friendList.size();
 
-        //calculates the radius adjustment needed for any stacked friends
-
-        // showing red dots which is saved user locations
+        // Create circles and labels for each friend
         for(int i = 0; i < numFriends; i++){
+            // Get friend's latest location information
             LiveData<Location> currLocLive = viewModel.getLiveLocation(friendList.get(i));
             Location currLoc = currLocLive.getValue();
 
-            // Create circle in the given angle
+            // Create circle or label in the given angle
             View loc_view = DisplayHelper.displaySingleLocation(CompassActivity.this, 1, radius-64, getDegree(currLoc) , getDistance(currLoc), zoomLevel, currLoc.label, 0);
 
+            // Save views for updated later
             locMap.put(currLoc.public_code, loc_view);
 
-            // caching background thread
+            // Cache background thread
             locationArray.add(currLocLive);
 
             // Set observer on LiveData so UI only updates when there is a change
@@ -325,9 +358,10 @@ public class CompassActivity extends AppCompatActivity {
         }
     }
 
-    //calculates radius adjustment for each friend and returns it as a list with respective indices matching each friend
+    // Calculate radius adjustment for each friend and returns it as a map
     public Map<String, Integer> calculateRadiusDiff()
     {
+        // Set offsets to 0 initially
         Map<String, Integer> radiusDiffList = new HashMap<>();
         for(int i = 0; i<locationArray.size(); i++)
         {
@@ -338,24 +372,26 @@ public class CompassActivity extends AppCompatActivity {
 
         for(int i = 0; i<locationArray.size(); i++)
         {
+            // Get location data for current friend
             LiveData<Location> currLocLive = locationArray.get(i);
             Location currLoc = currLocLive.getValue();
 
             String key = currLoc.public_code;
 
-            //skips locations that already stack with another location
+            // Skip locations that already stack with another location
             if(radiusDiffList.get(key) != 0)
             {
                 continue;
             }
 
+            // Get information for current location
             float currLocDegree = getDegree(currLoc);
             double currLocDistance = getDistance(currLoc);
             int currZoomLevel = zoomLevel(currLocDistance);
 
             for(int x = i+1; x<locationArray.size(); x++)
             {
-                //skips locations that already stack with another location
+                // Skip locations that already stack with another location
                 if(radiusDiffList.get(key) != 0)
                 {
                     continue;
@@ -365,10 +401,12 @@ public class CompassActivity extends AppCompatActivity {
                 Location tempCurrLoc = tempCurrLocLive.getValue();
                 String tempKey = tempCurrLoc.public_code;
 
+                // Get location data for friend being compared to
                 float tempCurrLocDegree = getDegree(tempCurrLoc);
                 double tempCurrLocDistance = getDistance(tempCurrLoc);
                 int tempCurrZoomLevel = zoomLevel(tempCurrLocDistance);
 
+                // If labels are near enough, offset them
                 if(tempCurrZoomLevel == currZoomLevel && Math.abs(tempCurrLocDegree - currLocDegree) <= 12 )
                 {
                     radiusDiffList.replace(key, -30);
@@ -381,7 +419,7 @@ public class CompassActivity extends AppCompatActivity {
         return radiusDiffList;
     }
 
-    //calculate which zoom level the location is on
+    // Calculate which zoom level the location is on
     private int zoomLevel(double distance)
     {
         if(distance >= 0 && distance < 1)
@@ -403,6 +441,7 @@ public class CompassActivity extends AppCompatActivity {
         }
     }
 
+    // Get degree at which label should be displayed
     private float getDegree(Location location){
         // Coordinates of current saved location
         double locLat = location.latitude;
@@ -417,6 +456,7 @@ public class CompassActivity extends AppCompatActivity {
         return rotatedDegree;
     }
 
+    // Calculate the distance at which label should be displayed
     private double getDistance(Location location){
         // Coordinates of current saved location
         double locLat = location.latitude;
@@ -427,11 +467,13 @@ public class CompassActivity extends AppCompatActivity {
         return distance;
     }
 
+    // Update orientation locally
     private void updateOrientation(Float orientation) {
         currOrientation = Math.toDegrees(orientation);
         Log.i("CURR ORIENTATION", currOrientation + "");
     }
 
+    // Update a single friend's location
     private void updateFriendLocations(Location location) {
         var executor = Executors.newSingleThreadExecutor();
         var future = executor.submit(() -> calculateRadiusDiff());
@@ -448,11 +490,12 @@ public class CompassActivity extends AppCompatActivity {
     }
 
     /*
-    These are for server testing only
+    These are for  testing only =============================================================
      */
     private void onOrientationChanged(Float orientation) {
         currOrientation = (float)Math.toDegrees(orientation);
     }
+
     public void reobserveOrientation() {
         LiveData<Float> orientationData = OrientationService.singleton(this).getOrientation();
         orientationData.observe(this, this::onOrientationChanged);
@@ -488,18 +531,9 @@ public class CompassActivity extends AppCompatActivity {
     public float getLongitude(){
         return (float) longitude;
     }
+
     public void onAddFriendsButtonClicked(View view) {
         Intent intent = new Intent(this, AddFriendsActivity.class);
         startActivity(intent);
-    }
-
-    public void setGPSStatusTrue(){
-        gpsIndicator.setTextColor(Color.GREEN);
-        timeIndicator.setText("Live");
-    }
-
-    public void setSetGPSStatusFalse(long time){
-        gpsIndicator.setTextColor(Color.RED);
-        timeIndicator.setText(Utilities.formatElapsedTime(time));
     }
 }

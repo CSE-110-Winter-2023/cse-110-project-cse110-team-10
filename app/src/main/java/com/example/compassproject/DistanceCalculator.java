@@ -1,6 +1,7 @@
 package com.example.compassproject;
 
 public class DistanceCalculator {
+    // Calculate distance between coordinates
     public static double distanceBetweenCoordinates(double lat1, double lon1, double lat2, double lon2) {
         //convert from rad to degrees
         final double R = 3959; // Radius of the earth in miles

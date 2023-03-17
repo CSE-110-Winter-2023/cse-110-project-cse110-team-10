@@ -41,6 +41,7 @@ public class Location {
     @SerializedName("updated_at")
     public String updated_at;
 
+    // Constructor with all fields
     public Location(@NonNull String public_code, String private_code, @NonNull String label, double latitude, double longitude, boolean is_listed_publicly, String created_at, String updated_at) {
         this.public_code = public_code;
         this.private_code = private_code;
@@ -51,6 +52,8 @@ public class Location {
         this.created_at = created_at;
         this.updated_at = updated_at;
     }
+
+    // Utility constructor for creating Location object with LocationGet object
     public Location(LocationGet locationGet){
         this.public_code = locationGet.public_code;
         this.private_code = null;
@@ -62,10 +65,12 @@ public class Location {
         this.updated_at = locationGet.updated_at;
     }
 
+    // Create object from JSON
     public static Location fromJSON(String json) {
         return new Gson().fromJson(json, Location.class);
     }
 
+    // Generate JSON for object
     public String toJSON() {
         return new Gson().toJson(this);
     }
