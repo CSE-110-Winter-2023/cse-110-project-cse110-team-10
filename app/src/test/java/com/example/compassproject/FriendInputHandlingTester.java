@@ -15,14 +15,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+
 @RunWith(AndroidJUnit4.class)
 public class FriendInputHandlingTester
 {
-    private LocationAPI singleton;
 
+    private MockWebServer server;
     @Before
     public void setUp(){
-        singleton = LocationAPI.provide();
+        server = new MockWebServer();
 
     }
 
@@ -30,6 +34,8 @@ public class FriendInputHandlingTester
     @Test
     public void testInvalidUID()
     {
+        HttpUrl baseUrl = server.url("/v1/chat/");
+        LocationAPI.changeEndpoint(baseUrl.toString());
         FriendEntry f1 = new FriendEntry("RandomNameThatWillNeverEverEverBeOnTheServer4000");
         assertFalse(CheckValidFriendUID.checkValidFriendUID(f1));
 
@@ -39,14 +45,25 @@ public class FriendInputHandlingTester
     @Test
     public void testValidUID()
     {
-        FriendEntry f1 = new FriendEntry("RandomNameThatWillAlwaysAlwaysBeOnTheServer4000");
+        try {
+            server.start();
+        } catch (Exception e){
 
-        Location loc1 = new Location("RandomNameThatWillAlwaysAlwaysBeOnTheServer4000",
-                "Team10TestInput4000", "4000", 32.12, 74.12,
-                true, "2023-03-05T12:00:00Z", "2023-03-05T18:30:00Z");
-        singleton.putLocation(loc1);
+        }
 
+        HttpUrl baseUrl = server.url("/v1/chat/");
+        LocationAPI.changeEndpoint(baseUrl.toString());
+
+        server.enqueue(new MockResponse().setBody("{\"public_code\": \"tim\",\"private_code\": \"123-456-7890\",\"label\": \"Point Nemo\",\"latitude\": -48.876667,\"longitude\": -123.393333,\"is_listed_publicly\": false,\"created_at\": \"2023-03-17T05:17:25Z\",\"updated_at\": \"2023-03-17T05:17:25Z\"}" ));
+        FriendEntry f1 = new FriendEntry("tim");
         assertTrue(CheckValidFriendUID.checkValidFriendUID(f1));
+
+        try {
+            server.shutdown();
+        } catch (Exception e){
+
+        }
+
 
     }
 

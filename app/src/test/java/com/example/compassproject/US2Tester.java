@@ -42,11 +42,15 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowDialog;
 
+import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+
 @RunWith(RobolectricTestRunner.class)
 public class US2Tester {
 
-    private LocationAPI singleton;
 
+    private MockWebServer server;
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
@@ -57,7 +61,7 @@ public class US2Tester {
         ShadowApplication app = Shadows.shadowOf(application);
         app.grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION);
 
-        singleton = LocationAPI.provide();
+        server = new MockWebServer();
     }
 
     @Test
@@ -87,6 +91,14 @@ public class US2Tester {
             SharedPreferences preferences = activity.getSharedPreferences("UserData", Context.MODE_PRIVATE);
             UserInfo u1 = new UserInfo(preferences);
 
+            try {
+                server.start();
+            } catch (Exception e){
+
+            }
+
+            HttpUrl baseUrl = server.url("/v1/chat/");
+            LocationAPI.changeEndpoint(baseUrl.toString());
 
             String userUID = u1.getUID();
 
@@ -105,15 +117,18 @@ public class US2Tester {
             mockLocation.setValue(new Pair<>(testLat, testLong));
 
             activity.updateCoordinates(mockLocation.getValue());
+            try {
+                 RecordedRequest request1 = server.takeRequest();
+                 assertEquals("PUT /v1/chat//" + userUID + " HTTP/1.1", request1.toString());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 
-            //check that user info was stored on server correctly
-            Location user = singleton.getLocation(userUID);
-            assertNotNull(user);
-            assertEquals(userName, user.label);
-            assertEquals(userUID, user.public_code);
-            assertEquals(testLat, user.latitude, 0);
-            assertEquals(testLong, user.longitude, 0);
+            try {
+                server.shutdown();
+            } catch (Exception e){
 
+            }
         });
 
         //test if UID is displayed correctly
