@@ -19,6 +19,8 @@ public class LocationAPI {
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
 
+    private static String endpoint = "https://socialcompass.goto.ucsd.edu/location/";
+
     public LocationAPI() {
         this.client = new OkHttpClient();
     }
@@ -30,13 +32,18 @@ public class LocationAPI {
         return instance;
     }
 
+    public static void changeEndpoint(String newURL){
+        endpoint = newURL + "/";
+        Log.i("URL", endpoint);
+    }
+
     // getLocation from Server
     public Location getLocation(String public_code) {
         // URLs cannot contain spaces, so we replace them with %20.
         String encodedMsg = public_code.replace(" ", "%20");
 
         var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + encodedMsg)
+                .url(endpoint + encodedMsg)
                 .method("GET", null)
                 .build();
 
@@ -74,7 +81,7 @@ public class LocationAPI {
 
         var locationContents = RequestBody.create(new LocationPut(location).toJSON(), JSON);
         var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + encodedMsg)
+                .url(endpoint + encodedMsg)
                 .method("PUT", locationContents)
                 .build();
 
@@ -106,7 +113,7 @@ public class LocationAPI {
 
         var locationContents = RequestBody.create(new LocationDelete(location).toJSON(), JSON);
         var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + encodedMsg)
+                .url(endpoint + encodedMsg)
                 .method("DELETE", locationContents)
                 .build();
 

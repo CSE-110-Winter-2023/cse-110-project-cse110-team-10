@@ -74,4 +74,9 @@ public class AddFriendsActivity extends AppCompatActivity {
         return checkValidFriendUID(friend);
     }
 
+    public void onUrlSubmitButtonClicked(View view) {
+        TextView urlInput = findViewById(R.id.urlInput);
+        LocationAPI.changeEndpoint(urlInput.getText().toString());
+        finish();
+    }
 }
