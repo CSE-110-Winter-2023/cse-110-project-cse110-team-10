@@ -48,24 +48,24 @@ public class US4TesterMain {
 
             // Set UI as originally fully zoomed in
 
-            View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, 1, "test");
-            View view2 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation2, distance2, 1, "test");
+            View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, 1, "test", 0);
+            View view2 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation2, distance2, 1, "test", 0);
             assertEquals(true, view1 instanceof TextView); // View 1 is in range
             assertEquals(true, view2 instanceof CircleView); // View 2 is out of range
 
             // Tests zoom out
 
             zoomLevel = 2; // Zoom out to include all locations within 10 miles
-            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, zoomLevel, "test");
-            view2 = DisplayHelper.updateLocation(activity, view2, radius, orientation2, distance2, zoomLevel, "test");
+            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, zoomLevel, "test", 0);
+            view2 = DisplayHelper.updateLocation(activity, view2, radius, orientation2, distance2, zoomLevel, "test", 0);
             assertEquals(true, view1 instanceof TextView); // View 1 is in range
             assertEquals(true, view2 instanceof TextView); // View 2 is in range
 
             // Tests zoom in
 
             zoomLevel = 1; // Zoom out to include all locations within 1 mile
-            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, zoomLevel, "test");
-            view2 = DisplayHelper.updateLocation(activity, view2, radius, orientation2, distance2, zoomLevel, "test");
+            view1 = DisplayHelper.updateLocation(activity, view1, radius, orientation1, distance1, zoomLevel, "test", 0);
+            view2 = DisplayHelper.updateLocation(activity, view2, radius, orientation2, distance2, zoomLevel, "test", 0);
             assertEquals(true, view1 instanceof TextView); // View 1 is in range
             assertEquals(true, view2 instanceof CircleView); // View 2 is in range
         });

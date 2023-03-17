@@ -55,7 +55,7 @@ public class US6Tester {
             assertEquals(2, zoomService.getZoomLevel());
             ZoomService.zoomIn();
             assertEquals(1, zoomService.getZoomLevel());
-            View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
+            View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test",0);
             assertEquals(true, view1 instanceof CircleView);
             ((ViewGroup) view1.getParent()).removeView(view1);
         });
@@ -70,9 +70,12 @@ public class US6Tester {
             var radius = 400;
             var orientation1 = 0;
             var distance1 = 550;
-            View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test");
-            assertEquals(true, view1 instanceof CircleView);
+
+            View view1 = DisplayHelper.displaySingleLocation(activity, 1, radius, orientation1, distance1, zoomService.getZoomLevel(), "test", 0);
+            assertEquals(true, view1 instanceof CircleView); // View 1 is not in range
             ((ViewGroup) view1.getParent()).removeView(view1);
+        
+
         });
         scenario.close();
     }
