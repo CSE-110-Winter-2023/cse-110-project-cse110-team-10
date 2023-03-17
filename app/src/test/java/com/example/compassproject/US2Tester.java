@@ -123,7 +123,7 @@ public class US2Tester {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-
+            LocationAPI.changeEndpoint("https://socialcompass.goto.ucsd.edu/location");
             try {
                 server.shutdown();
             } catch (Exception e){

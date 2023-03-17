@@ -67,7 +67,7 @@ public class UIDGeneratorTester
         LocationAPI.changeEndpoint(baseUrl.toString());
 
         assertFalse(GenerateUID.checkUniqueUID(UID));
-
+        LocationAPI.changeEndpoint("https://socialcompass.goto.ucsd.edu/location");
         try {
             server.shutdown();
         } catch (Exception e){

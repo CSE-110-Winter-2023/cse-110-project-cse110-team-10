@@ -57,7 +57,7 @@ public class FriendInputHandlingTester
         server.enqueue(new MockResponse().setBody("{\"public_code\": \"tim\",\"private_code\": \"123-456-7890\",\"label\": \"Point Nemo\",\"latitude\": -48.876667,\"longitude\": -123.393333,\"is_listed_publicly\": false,\"created_at\": \"2023-03-17T05:17:25Z\",\"updated_at\": \"2023-03-17T05:17:25Z\"}" ));
         FriendEntry f1 = new FriendEntry("tim");
         assertTrue(CheckValidFriendUID.checkValidFriendUID(f1));
-
+        LocationAPI.changeEndpoint("https://socialcompass.goto.ucsd.edu/location");
         try {
             server.shutdown();
         } catch (Exception e){
