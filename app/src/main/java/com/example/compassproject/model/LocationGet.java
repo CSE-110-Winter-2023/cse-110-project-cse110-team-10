@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
+// This class is for the structure needed for the GET HTTP request
 public class LocationGet {
     /** The public code of the person. Used as the primary key for locations */
     @PrimaryKey
@@ -34,10 +35,12 @@ public class LocationGet {
     @SerializedName("updated_at")
     public String updated_at;
 
+    // Generate objects from JSON
     public static LocationGet fromJSON(String json) {
         return new Gson().fromJson(json, LocationGet.class);
     }
 
+    // Generate JSON for object
     public String toJSON() {
         return new Gson().toJson(this);
     }

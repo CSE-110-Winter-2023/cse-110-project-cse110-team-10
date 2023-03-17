@@ -13,6 +13,7 @@ public abstract class LocationDatabase extends RoomDatabase{
 
     public abstract LocationDao getDao();
 
+    // Return singleton for database
     public synchronized static LocationDatabase provide(Context context) {
         if (instance == null) {
             instance = LocationDatabase.make(context);
@@ -20,6 +21,7 @@ public abstract class LocationDatabase extends RoomDatabase{
         return instance;
     }
 
+    // Use builder to create database
     private static LocationDatabase make(Context context) {
         return Room.databaseBuilder(context, LocationDatabase.class, "compass_app.db")
                 .allowMainThreadQueries()
@@ -27,6 +29,7 @@ public abstract class LocationDatabase extends RoomDatabase{
                 .build();
     }
 
+    // Inject test database for mocking purposes
     @VisibleForTesting
     public static void inject(LocationDatabase testDatabase) {
         if (instance != null ) {

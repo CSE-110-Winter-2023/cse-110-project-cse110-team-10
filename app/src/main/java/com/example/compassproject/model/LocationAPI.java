@@ -25,6 +25,7 @@ public class LocationAPI {
         this.client = new OkHttpClient();
     }
 
+    // Singleton method
     public static LocationAPI provide() {
         if (instance == null) {
             instance = new LocationAPI();
@@ -32,12 +33,13 @@ public class LocationAPI {
         return instance;
     }
 
+    // Method to change API endpoint for mocking purposes
     public static void changeEndpoint(String newURL){
         endpoint = newURL + "/";
         Log.i("URL", endpoint);
     }
 
-    // getLocation from Server
+    // Get location from server
     public Location getLocation(String public_code) {
         // URLs cannot contain spaces, so we replace them with %20.
         String encodedMsg = public_code.replace(" ", "%20");
@@ -58,7 +60,7 @@ public class LocationAPI {
         }
     }
 
-    // getLocation Asynchronously
+    // Get location asynchronously
     @AnyThread
     public Location getLocationAsync(String public_code) {
         var executor = Executors.newSingleThreadExecutor();
@@ -74,7 +76,7 @@ public class LocationAPI {
         return null;
     }
 
-    // putLocation on the server
+    // Put location on the server
     public void putLocation(Location location) {
         // URLs cannot contain spaces, so we replace them with %20.
         String encodedMsg = location.public_code.replace(" ", "%20");
@@ -92,7 +94,7 @@ public class LocationAPI {
         }
     }
 
-    // putLocation Asynchronously
+    // Put location asynchronously
     @AnyThread
     public void putLocationAsync(Location location) {
         var executor = Executors.newSingleThreadExecutor();
@@ -106,7 +108,7 @@ public class LocationAPI {
 
     }
 
-    // Delete Location on Server
+    // Delete location from Server
     public boolean deleteLocation(Location location) {
         // URLs cannot contain spaces, so we replace them with %20.
         String encodedMsg = location.public_code.replace(" ", "%20");

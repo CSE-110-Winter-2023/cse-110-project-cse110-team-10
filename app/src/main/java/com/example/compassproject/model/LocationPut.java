@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
+// This class is for the structure needed for the PUT HTTP request
 public class LocationPut {
 
     /** The private code of the person. */
@@ -30,10 +31,12 @@ public class LocationPut {
         this.longitude = loc.longitude;
     }
 
+    // Generate object from JSON
     public static LocationPut fromJSON(String json) {
         return new Gson().fromJson(json, LocationPut.class);
     }
 
+    // Generate JSON from object
     public String toJSON() {
         return new Gson().toJson(this);
     }

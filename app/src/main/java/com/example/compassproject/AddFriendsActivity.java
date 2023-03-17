@@ -19,10 +19,8 @@ import com.example.compassproject.model.LocationAPI;
 import org.w3c.dom.Text;
 
 public class AddFriendsActivity extends AppCompatActivity {
-
     private FriendEntryDatabase db;
     private FriendEntryDao friendEntryDao;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,26 +33,28 @@ public class AddFriendsActivity extends AppCompatActivity {
         UserInfo u1 = new UserInfo(preferences);
         textView.setText(u1.getUID());
 
+        // Instantiate database and DAO
         db = FriendEntryDatabase.getSingleton(this);
         friendEntryDao = db.friendEntryDao();
     }
 
-    //return to compass view when back button is clicked
+    // Return to compass view when back button is clicked
     public void onAddFriendsBackButtonClicked(View view)
     {
         finish();
     }
 
-    //clicking submit button
+    // Add friend if valid UID
     public void onAddFriendsSubmitButtonClicked(View view)
     {
-        //gets inputted UID from the edit text view
+        // Gets inputted UID from the edit text view
         EditText friend_uid_view = findViewById(R.id.friend_uid_input);
         String friend_uid = friend_uid_view.getText().toString();
         FriendEntry friend = new FriendEntry(friend_uid);
 
         boolean isValidUID = checkValidFriend(friend);
 
+        // If valid UID, add friend to database
         if(isValidUID)
         {
             friendEntryDao.insert(friend);
@@ -62,6 +62,7 @@ public class AddFriendsActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CompassActivity.class);
             startActivity(intent);
         }
+        // Else, show error
         else
         {
             Utilities.showPopup(this, "Error", "Invalid UID Entered");
@@ -69,11 +70,13 @@ public class AddFriendsActivity extends AppCompatActivity {
 
     }
 
+    // Check if friend has valid UID on server
     private boolean checkValidFriend(FriendEntry friend)
     {
         return checkValidFriendUID(friend);
     }
 
+    // Update app with new server endpoint
     public void onUrlSubmitButtonClicked(View view) {
         TextView urlInput = findViewById(R.id.urlInput);
         LocationAPI.changeEndpoint(urlInput.getText().toString());
