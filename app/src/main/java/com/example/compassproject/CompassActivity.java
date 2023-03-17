@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -441,9 +443,66 @@ public class CompassActivity extends AppCompatActivity {
             // Update circle in the given angle
             View newView = DisplayHelper.updateLocation(CompassActivity.this, locMap.get(location.public_code), radius-64, getDegree(location), getDistance(location), zoomLevel, location.label, radiusDiffList.get(location.public_code));
             locMap.put(location.public_code, newView);
+            var handler = new Handler(Looper.getMainLooper());
+            handler.post(() -> {
+                handleAllOverlappingViews(location);
+            });
         }
         catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    
+    public boolean viewsOverlap(TextView v1, TextView v2){
+
+        Rect rect1 = new Rect(v1.getLeft(), v1.getTop(), v1.getRight(), v1.getBottom());
+        Rect rect2 = new Rect(v2.getLeft(), v2.getTop(), v2.getRight(), v2.getBottom());
+        return rect1.intersect(rect2) || rect2.intersect(rect1);
+    }
+
+    public void handleOverlappingViews(TextView v1, TextView v2){
+
+        if(viewsOverlap(v1, v2)){
+            Rect rect1 = new Rect(v1.getLeft(), v1.getTop(), v1.getRight(), v1.getBottom());
+            Rect rect2 = new Rect(v2.getLeft(), v2.getTop(), v2.getRight(), v2.getBottom());
+
+            // Truncate v1
+            if(rect1.left < rect2.left){
+                var maxWidth = v2.getLeft()-v1.getLeft();
+                v1.setWidth(maxWidth-20);
+            }
+            // Truncate v2
+            else{
+                var maxWidth = v1.getLeft() - v2.getLeft();
+                v2.setWidth(maxWidth-20);
+            }
+        }
+    }
+
+    public void handleAllOverlappingViews(Location loc){
+        String publicCode = loc.public_code;
+        View view = locMap.get(publicCode);
+        // Don't run if
+        if(view instanceof CircleView){
+            return;
+        }
+
+        for(int i = 0; i < locationArray.size(); i++){
+            String currPublicCode = locationArray.get(i).getValue().public_code;
+
+            // Skip if its the same view
+            if(publicCode.equals(currPublicCode)){
+                continue;
+            }
+
+            View currView = locMap.get(currPublicCode);
+
+            // Skip if its a CircleView
+            if(!(currView instanceof TextView)){
+                continue;
+            }
+
+            handleOverlappingViews((TextView) view, (TextView) currView);
         }
     }
 
